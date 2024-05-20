@@ -9,6 +9,10 @@ function getRequestResult() {
         "status"=> "",
         "location"=> "",
         "Type"=> "",
+        "locations"=> "",
+        "Sender"=> "",
+        "Patient"=> "",
+        "reciver"=> "",
     );
     $sql = "SELECT * FROM request WHERE สถานะ = 0";
     $stmt = $conn->prepare($sql);
@@ -21,8 +25,12 @@ function getRequestResult() {
                 $requestResult['ID'] = $row['Info_id'];
                 $requestResult['Caller'] = $row['ผู้เรียก'];
                 $requestResult['status'] = $row['ความเร่งด่วน'];
-                $requestResult['location'] = $row['สถานที่'];
+                $requestResult['location'] = $row['สถานที่รับ'];
                 $requestResult['Type'] = $row['ประเภทเปล'];
+                $requestResult['locations'] = $row['สถานที่ส่ง'];
+                //$requestResult['Sender'] = $row['ผู้ส่ง'];
+                $requestResult['Patient'] = $row['ชื่อผู้ป่วย'];
+                $requestResult['reciver'] = $row['ผู้รับ'];
                 $urgentRowFound = true;
                 break;
             }
@@ -35,9 +43,12 @@ function getRequestResult() {
                     $requestResult['ID'] = $row['Info_id'];
                     $requestResult['Caller'] = $row['ผู้เรียก'];
                     $requestResult['status'] = $row['ความเร่งด่วน'];
-                    $requestResult['location'] = $row['สถานที่'];
+                    $requestResult['location'] = $row['สถานที่รับ'];
                     $requestResult['Type'] = $row['ประเภทเปล'];
-                    break;
+                    $requestResult['locations'] = $row['สถานที่ส่ง'];
+                    //$requestResult['Sender'] = $row['ผู้ส่ง'];
+                    $requestResult['Patient'] = $row['ชื่อผู้ป่วย'];
+                    $requestResult['reciver'] = $row['ผู้รับ'];
                 }
             }
         }
@@ -45,5 +56,22 @@ function getRequestResult() {
 
     $stmt->close();
     return $requestResult;
+
+    $sql = "SELECT * FROM project";
+    $result = $conn->query($sql);
+    
+    // Check if there are any results
+    if ($result->num_rows > 0) {
+        // Output data of each row
+        while($row = $result->fetch_assoc()) {
+            echo "ID: " . $requestResult['ID']. " - Name: " . $requestResult['Caller']. "<br>";
+        }
+    } else {
+        echo "0 results";
+    }
+    
+    // Close connection
+    $conn->close();
+
 }
 ?>
