@@ -286,26 +286,35 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
 
 if (isset($postbackData['action']) && $postbackData['action'] == 'confirm_complete') {
   $responseId = $postbackData['itemId'];
-  
+
   $selectQuery = "SELECT Info_id FROM request WHERE Info_id = '$responseId'";
   $selectResult = mysqli_query($conn, $selectQuery);
   if ($selectResult) {
       $row = mysqli_fetch_assoc($selectResult);
       if ($row) {
           $updateQuery = "UPDATE request SET สถานะ = 2, เวลา = NOW() WHERE Info_id = '$responseId'";
-          
+
           try {
               $updateResult = mysqli_query($conn, $updateQuery);
           } catch (\Throwable $th) {
               error_log("Error updating status for Info_id '$responseId': " . $th->getMessage());
           }
-          
+
           if ($updateResult) {
+              // Fetch user profile if userId is available
+              $userId = isset($jsonData['events'][0]['source']['userId']) ? $jsonData['events'][0]['source']['userId'] : null;
+              if ($userId) {
+                  $userProfile = getUserProfile($userId, ['AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
+                  $displayName = $userProfile['displayName'] ?? 'Unknown User';
+              } else {
+                  $displayName = 'Unknown User';
+              }
+
               // Send acknowledgment to the user
               $replyMessage = [
                   [
                       "type" => "text",
-                      "text" =>"เยี่ยมมากงานของคุณเสร็จเเล้ว $displayName"
+                      "text" => "เยี่ยมมาก $displayName งานของคุณเสร็จเเล้ว"
                   ]
               ];
 
