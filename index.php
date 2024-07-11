@@ -31,14 +31,14 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
     $itemId = $postbackData['itemId'];
     $userProfile = getUserProfile($userId, ['AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
     $displayName = $userProfile['displayName'] ?? 'Unknown User';
-    $selectQuery = "SELECT Info_id FROM request WHERE Info_id = '$itemId'";
+    $selectQuery = "SELECT stretcher_register_id FROM stretcher_register WHERE stretcher_register_id = '$itemId'";
     $selectResult = mysqli_query($conn, $selectQuery);
     if ($selectResult) {
       $row = mysqli_fetch_assoc($selectResult);
       if ($row) {
-        $infoId = $row['Info_id'];
-        $updateQuery = "UPDATE request SET สถานะ = 1 WHERE Info_id = '$infoId'";
-        $updateReQuery = "UPDATE request SET ผู้รับ = '$displayName' WHERE Info_id = '$infoId'";
+        $infoId = $row['stretcher_register_id'];
+        $updateQuery = "UPDATE stretcher_register SET สถานะ = 1 WHERE stretcher_register_id = '$infoId'";
+        $updateReQuery = "UPDATE stretcher_register SET ผู้รับ = '$displayName' WHERE stretcher_register_id = '$infoId'";
         
 
         try {
@@ -52,7 +52,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
 
         } else {
 
-          error_log("Error updating status for Info_id '$infoId': " . mysqli_error($conn));
+          error_log("Error updating status for stretcher_register_id '$infoId': " . mysqli_error($conn));
           $replyMessage = [
             [
               "type" => "text",
@@ -174,14 +174,14 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                               "layout": "baseline",
                               "contents": [
                                   {
-                                      "text": "ผู้ป่วย",
+                                      "text": "รหัสผู้ป่วย",
                                       "size": "sm",
                                       "color": "#aaaaaa",
                                       "type": "text"
                                   },
                                   {
                                       "size": "sm",
-                                      "text": "' . $reResult['Patient'] . '",
+                                      "text": "' . $reResult['PatientID'] . '",
                                       "color": "#666666",
                                       "wrap": true,
                                       "type": "text"
@@ -287,12 +287,12 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
 if (isset($postbackData['action']) && $postbackData['action'] == 'confirm_complete') {
   $responseId = $postbackData['itemId'];
 
-  $selectQuery = "SELECT Info_id FROM request WHERE Info_id = '$responseId'";
+  $selectQuery = "SELECT stretcher_register_id FROM stretcher_register WHERE stretcher_register_id = '$responseId'";
   $selectResult = mysqli_query($conn, $selectQuery);
   if ($selectResult) {
       $row = mysqli_fetch_assoc($selectResult);
       if ($row) {
-          $updateQuery = "UPDATE request SET สถานะ = 2, เวลา = NOW() WHERE Info_id = '$responseId'";
+          $updateQuery = "UPDATE stretcher_register SET สถานะ = 2, เวลา = NOW() WHERE stretcher_register_id = '$responseId'";
 
           try {
               $updateResult = mysqli_query($conn, $updateQuery);
@@ -326,7 +326,7 @@ if (isset($postbackData['action']) && $postbackData['action'] == 'confirm_comple
               sendMessage($replyJson, ['URL' => "https://api.line.me/v2/bot/message/reply", 'AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
           } else {
               // Handle error if the update fails
-              error_log("Error updating status for Info_id '$responseId': " . mysqli_error($conn));
+              error_log("Error updating status for stretcher_register_id '$responseId': " . mysqli_error($conn));
               $replyMessage = [
                   [
                       "type" => "text",
@@ -642,7 +642,7 @@ switch ($text) {
     // Log the displayName for debugging
     error_log("Display Name: $displayName");
 
-    $checkQuery = "SELECT * FROM request WHERE ผู้รับ = '$displayName' AND สถานะ = 1 LIMIT 1";
+    $checkQuery = "SELECT * FROM stretcher_register WHERE ผู้รับ = '$displayName' AND สถานะ = 1 LIMIT 1";
     
     // Log the SQL query for debugging
     error_log("SQL Query: $checkQuery");
@@ -651,7 +651,7 @@ switch ($text) {
     if ($checkResult) {
         $row = mysqli_fetch_assoc($checkResult);
         if ($row) {
-            $infoId = $row['Info_id'];
+            $infoId = $row['stretcher_register_id'];
             error_log("Found job: " . json_encode($row));
 
             $replymessage[] = json_decode('{
@@ -671,7 +671,7 @@ switch ($text) {
                                 "type": "button",
                                 "action": {
                                     "type": "postback",
-                                    "data": "action=confirm_complete&itemId=' . $row['Info_id'] . '",
+                                    "data": "action=confirm_complete&itemId=' . $row['stretcher_register_id'] . '",
                                     "label": "ยืนยันส่งงาน"
                                 }
                             }
@@ -702,7 +702,7 @@ switch ($text) {
                                             },
                                             {
                                                 "size": "sm",
-                                                "text": "' . $row['Info_id'] . '",
+                                                "text": "' . $row['stretcher_register_id'] . '",
                                                 "wrap": true,
                                                 "color": "#666666",
                                                 "type": "text"
@@ -722,7 +722,7 @@ switch ($text) {
                                             },
                                             {
                                                 "size": "sm",
-                                                "text": "' . $row['ผู้เรียก'] . '",
+                                                "text": "' . $row['doctor_request'] . '",
                                                 "color": "#666666",
                                                 "wrap": true,
                                                 "type": "text"
@@ -735,14 +735,14 @@ switch ($text) {
                                         "layout": "baseline",
                                         "contents": [
                                             {
-                                                "text": "ผู้ป่วย",
+                                                "text": "รหัสผู้ป่วย",
                                                 "size": "sm",
                                                 "color": "#aaaaaa",
                                                 "type": "text"
                                             },
                                             {
                                                 "size": "sm",
-                                                "text": "' . $row['ชื่อผู้ป่วย'] . '",
+                                                "text": "' . $row['hn'] . '",
                                                 "color": "#666666",
                                                 "wrap": true,
                                                 "type": "text"
@@ -943,14 +943,14 @@ switch ($text) {
                     "layout": "baseline",
                     "contents": [
                       {
-                        "text": "ผู้ป่วย",
+                        "text": "รหัสผู้ป่วย",
                         "size": "sm",
                         "color": "#aaaaaa",
                         "type": "text"
                       },
                       {
                         "size": "sm",
-                        "text": "' . $reResult['Patient'] . '",
+                        "text": "' . $reResult['PatientID'] . '",
                         "color": "#666666",
                         "wrap": true,
                         "type": "text"
