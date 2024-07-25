@@ -1,5 +1,6 @@
 <?php
 include("query.php");
+
 $LINEData = file_get_contents('php://input');
 file_put_contents('log.txt', $LINEData . PHP_EOL, FILE_APPEND);
 
@@ -22,7 +23,6 @@ $infoId = null;
 if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "postback") {
     parse_str($jsonData["events"][0]["postback"]["data"], $postbackData);
     if (isset($postbackData['action']) && $postbackData['action'] == 'accept_job') {
-        // Fetch user profile if needed
         $itemId = $postbackData['itemId'];
         $userProfile = getUserProfile($userId, ['AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
         $displayName = $userProfile['displayName'] ?? 'Unknown User';
@@ -41,7 +41,6 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                 }
 
                 if ($updateResult) {
-                    // Acknowledge the acceptance
                     $responemessage[] = json_decode('{
                         "type": "flex",
                         "altText": "Flex Message",
@@ -64,7 +63,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                         "weight": "bold",
                                         "type": "text",
                                         "size": "xl",
-                                        "text": "' . $reResult['status'] . '"
+                                        "text": "' . ($reResult['status'] ?? 'N/A') . '"
                                     },
                                     {
                                         "contents": [
@@ -81,7 +80,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                                     },
                                                     {
                                                         "size": "sm",
-                                                        "text": "' . $reResult['ID'] . '",
+                                                        "text": "' . ($reResult['ID'] ?? 'N/A') . '",
                                                         "wrap": true,
                                                         "color": "#666666",
                                                         "type": "text"
@@ -101,7 +100,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                                     },
                                                     {
                                                         "size": "sm",
-                                                        "text": "' . $reResult['Caller'] . '",
+                                                        "text": "' . ($reResult['Caller'] ?? 'N/A') . '",
                                                         "color": "#666666",
                                                         "wrap": true,
                                                         "type": "text"
@@ -121,7 +120,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                                     },
                                                     {
                                                         "size": "sm",
-                                                        "text": "' . $reResult['Patient'] . '",
+                                                        "text": "' . ($reResult['Patient'] ?? 'N/A') . '",
                                                         "color": "#666666",
                                                         "wrap": true,
                                                         "type": "text"
@@ -141,7 +140,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                                     },
                                                     {
                                                         "size": "sm",
-                                                        "text": "' . $reResult['location'] . '",
+                                                        "text": "' . ($reResult['location'] ?? 'N/A') . '",
                                                         "wrap": true,
                                                         "color": "#666666",
                                                         "type": "text"
@@ -161,7 +160,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                                     },
                                                     {
                                                         "size": "sm",
-                                                        "text": "' . $reResult['locations'] . '",
+                                                        "text": "' . ($reResult['locations'] ?? 'N/A') . '",
                                                         "wrap": true,
                                                         "color": "#666666",
                                                         "type": "text"
@@ -181,7 +180,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                                         "size": "sm",
                                                         "type": "text",
                                                         "wrap": true,
-                                                        "text": "' . $reResult['Type'] . '"
+                                                        "text": "' . ($reResult['Type'] ?? 'N/A') . '"
                                                     }
                                                 ],
                                                 "type": "box"
@@ -424,11 +423,11 @@ $replymessage = [];
 
 switch ($text) {
     case 'a':
-        $id = $reResult['ID'];
-        $caller = $reResult['Caller'];
-        $status = $reResult['status'];
-        $location = $reResult['location'];
-        $type = $reResult['Type'];
+        $id = $reResult['ID'] ?? 'N/A';
+        $caller = $reResult['Caller'] ?? 'N/A';
+        $status = $reResult['status'] ?? 'N/A';
+        $location = $reResult['location'] ?? 'N/A';
+        $type = $reResult['Type'] ?? 'N/A';
 
         $message = "ID: $id\nCaller: $caller\nStatus: $status\nLocation: $location\nType: $type";
 
@@ -493,7 +492,7 @@ switch ($text) {
                                     "weight": "bold",
                                     "type": "text",
                                     "size": "xl",
-                                    "text": "' . $row['stretcher_type_id'] . '"
+                                    "text": "' . ($row['stretcher_type_id'] ?? 'N/A') . '"
                                 },
                                 {
                                     "contents": [
@@ -510,7 +509,7 @@ switch ($text) {
                                                 },
                                                 {
                                                     "size": "sm",
-                                                    "text": "' . $row['stretcher_register_id'] . '",
+                                                    "text": "' . ($row['stretcher_register_id'] ?? 'N/A') . '",
                                                     "wrap": true,
                                                     "color": "#666666",
                                                     "type": "text"
@@ -530,7 +529,7 @@ switch ($text) {
                                                 },
                                                 {
                                                     "size": "sm",
-                                                    "text": "' . $row['doctor_request'] . '",
+                                                    "text": "' . ($row['doctor_request'] ?? 'N/A') . '",
                                                     "color": "#666666",
                                                     "wrap": true,
                                                     "type": "text"
@@ -550,7 +549,7 @@ switch ($text) {
                                                 },
                                                 {
                                                     "size": "sm",
-                                                    "text": "' . $row['hn'] . '",
+                                                    "text": "' . ($row['hn'] ?? 'N/A') . '",
                                                     "color": "#666666",
                                                     "wrap": true,
                                                     "type": "text"
@@ -570,7 +569,7 @@ switch ($text) {
                                                 },
                                                 {
                                                     "size": "sm",
-                                                    "text": "' . $row['from_note'] . '",
+                                                    "text": "' . ($row['from_note'] ?? 'N/A') . '",
                                                     "wrap": true,
                                                     "color": "#666666",
                                                     "type": "text"
@@ -590,7 +589,7 @@ switch ($text) {
                                                 },
                                                 {
                                                     "size": "sm",
-                                                    "text": "' . $row['send_note'] . '",
+                                                    "text": "' . ($row['send_note'] ?? 'N/A') . '",
                                                     "wrap": true,
                                                     "color": "#666666",
                                                     "type": "text"
@@ -610,7 +609,7 @@ switch ($text) {
                                                     "size": "sm",
                                                     "type": "text",
                                                     "wrap": true,
-                                                    "text": "' . $row['stretcher_work_result_detail'] . '"
+                                                    "text": "' . ($row['stretcher_work_result_detail'] ?? 'N/A') . '"
                                                 }
                                             ],
                                             "type": "box"
@@ -677,7 +676,7 @@ switch ($text) {
                             "type": "button",
                             "action": {
                                 "type": "postback",
-                                "data": "action=accept_job&itemId=' . $reResult['ID'] . '",
+                                "data": "action=accept_job&itemId=' . ($reResult['ID'] ?? 'N/A') . '",
                                 "label": "รับงาน"
                             }
                         }
@@ -700,7 +699,7 @@ switch ($text) {
                             "weight": "bold",
                             "type": "text",
                             "size": "xl",
-                            "text": "' . $reResult['status'] . '"
+                            "text": "' . ($reResult['status'] ?? 'N/A') . '"
                         },
                         {
                             "contents": [
@@ -717,7 +716,7 @@ switch ($text) {
                                         },
                                         {
                                             "size": "sm",
-                                            "text": "' . $reResult['ID'] . '",
+                                            "text": "' . ($reResult['ID'] ?? 'N/A') . '",
                                             "wrap": true,
                                             "color": "#666666",
                                             "type": "text"
@@ -737,7 +736,7 @@ switch ($text) {
                                         },
                                         {
                                             "size": "sm",
-                                            "text": "' . $reResult['Caller'] . '",
+                                            "text": "' . ($reResult['Caller'] ?? 'N/A') . '",
                                             "color": "#666666",
                                             "wrap": true,
                                             "type": "text"
@@ -757,7 +756,7 @@ switch ($text) {
                                         },
                                         {
                                             "size": "sm",
-                                            "text": "' . $reResult['Patient'] . '",
+                                            "text": "' . ($reResult['Patient'] ?? 'N/A') . '",
                                             "color": "#666666",
                                             "wrap": true,
                                             "type": "text"
@@ -777,7 +776,7 @@ switch ($text) {
                                         },
                                         {
                                             "size": "sm",
-                                            "text": "' . $reResult['location'] . '",
+                                            "text": "' . ($reResult['location'] ?? 'N/A') . '",
                                             "wrap": true,
                                             "color": "#666666",
                                             "type": "text"
@@ -797,7 +796,7 @@ switch ($text) {
                                         },
                                         {
                                             "size": "sm",
-                                            "text": "' . $reResult['locations'] . '",
+                                            "text": "' . ($reResult['locations'] ?? 'N/A') . '",
                                             "wrap": true,
                                             "color": "#666666",
                                             "type": "text"
@@ -817,7 +816,7 @@ switch ($text) {
                                             "size": "sm",
                                             "type": "text",
                                             "wrap": true,
-                                            "text": "' . $reResult['Type'] . '"
+                                            "text": "' . ($reResult['Type'] ?? 'N/A') . '"
                                         }
                                     ],
                                     "type": "box"
