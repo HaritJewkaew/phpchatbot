@@ -55,11 +55,11 @@ function handlePostback($jsonData, $reResult, $userId, $replyToken) {
 
                 if ($updateResult) {
                     error_log("Job accepted successfully: " . json_encode($reResult));
-                    $replyMessage = createFlexMessageConfirmation($reResult, $displayName);
+                    $responemessage[] = createFlexMessage($reResult, $displayName);
 
                     $responseJson = json_encode([
                         "replyToken" => $replyToken,
-                        "messages" => $replyMessage
+                        "messages" => $responemessage
                     ]);
                     sendMessage($responseJson, ['URL' => "https://api.line.me/v2/bot/message/reply", 'AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
                 } else {
@@ -154,7 +154,6 @@ function handleSendJob($jsonData, &$replymessage) {
             $infoId = $row['stretcher_register_id'];
             error_log("Found job: " . json_encode($row));
             $replymessage[] = createFlexMessage($row, $displayName);
-            $replymessage[] = createConfirmationFlexMessage($row); // Assuming this is your second flex
         } else {
             error_log("No jobs found with status 1");
             $replymessage[] = [
