@@ -22,8 +22,9 @@ $infoId = null;
 if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "postback") {
     parse_str($jsonData["events"][0]["postback"]["data"], $postbackData);
     if (isset($postbackData['action']) && $postbackData['action'] == 'accept_job') {
+        // Fetch user profile if needed
         $itemId = $postbackData['itemId'];
-        $userProfile = getUserProfile($userId, ['AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU= ']);
+        $userProfile = getUserProfile($userId, ['AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
         $displayName = $userProfile['displayName'] ?? 'Unknown User';
         $selectQuery = "SELECT stretcher_register_id FROM stretcher_register WHERE stretcher_register_id = '$itemId'";
         $selectResult = mysqli_query($conn, $selectQuery);
@@ -41,176 +42,184 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
 
                 if ($updateResult) {
                     // Acknowledge the acceptance
-                    $responemessage[] = [
-                        "type" => "flex",
-                        "altText" => "Flex Message",
-                        "contents" => [
-                            "type" => "bubble",
-                            "hero" => [
-                                "size" => "4xl",
-                                "action" => [
-                                    "type" => "uri",
-                                    "uri" => "http://linecorp.com/"
-                                ],
-                                "url" => "https://www.trueplookpanya.com/data/product/uploads/other4/exclamat_orange.jpg",
-                                "type" => "image"
-                            ],
-                            "body" => [
-                                "layout" => "vertical",
-                                "type" => "box",
-                                "contents" => [
-                                    [
-                                        "weight" => "bold",
-                                        "type" => "text",
-                                        "size" => "xl",
-                                        "text" => $reResult['status'] ?? 'N/A'
-                                    ],
-                                    [
-                                        "type" => "box",
-                                        "spacing" => "sm",
-                                        "layout" => "baseline",
-                                        "contents" => [
-                                            [
-                                                "color" => "#aaaaaa",
-                                                "type" => "text",
-                                                "text" => "ID",
-                                                "size" => "sm"
-                                            ],
-                                            [
-                                                "size" => "sm",
-                                                "text" => $reResult['ID'] ?? 'N/A',
-                                                "wrap" => true,
-                                                "color" => "#666666",
-                                                "type" => "text"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        "spacing" => "sm",
-                                        "type" => "box",
-                                        "layout" => "baseline",
-                                        "contents" => [
-                                            [
-                                                "text" => "ผู้เรียก",
-                                                "size" => "sm",
-                                                "color" => "#aaaaaa",
-                                                "type" => "text"
-                                            ],
-                                            [
-                                                "size" => "sm",
-                                                "text" => $reResult['Caller'] ?? 'N/A',
-                                                "color" => "#666666",
-                                                "wrap" => true,
-                                                "type" => "text"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        "spacing" => "sm",
-                                        "type" => "box",
-                                        "layout" => "baseline",
-                                        "contents" => [
-                                            [
-                                                "text" => "ผู้ป่วย",
-                                                "size" => "sm",
-                                                "color" => "#aaaaaa",
-                                                "type" => "text"
-                                            ],
-                                            [
-                                                "size" => "sm",
-                                                "text" => $reResult['Patient'] ?? 'N/A',
-                                                "color" => "#666666",
-                                                "wrap" => true,
-                                                "type" => "text"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        "type" => "box",
-                                        "spacing" => "sm",
-                                        "layout" => "baseline",
-                                        "contents" => [
-                                            [
-                                                "color" => "#aaaaaa",
-                                                "type" => "text",
-                                                "text" => "สถานที่รับ",
-                                                "size" => "sm"
-                                            ],
-                                            [
-                                                "size" => "sm",
-                                                "text" => $reResult['location'] ?? 'N/A',
-                                                "wrap" => true,
-                                                "color" => "#666666",
-                                                "type" => "text"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        "type" => "box",
-                                        "spacing" => "sm",
-                                        "layout" => "baseline",
-                                        "contents" => [
-                                            [
-                                                "color" => "#aaaaaa",
-                                                "type" => "text",
-                                                "text" => "สถานที่ส่ง",
-                                                "size" => "sm"
-                                            ],
-                                            [
-                                                "size" => "sm",
-                                                "text" => $reResult['locations'] ?? 'N/A',
-                                                "wrap" => true,
-                                                "color" => "#666666",
-                                                "type" => "text"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        "layout" => "baseline",
-                                        "contents" => [
-                                            [
-                                                "text" => "ประเภทเปล",
-                                                "type" => "text",
-                                                "size" => "sm",
-                                                "color" => "#aaaaaa"
-                                            ],
-                                            [
-                                                "size" => "sm",
-                                                "type" => "text",
-                                                "wrap" => true,
-                                                "text" => $reResult['Type'] ?? 'N/A'
-                                            ]
+                    $responemessage[] = json_decode('{
+                        "type": "flex",
+                        "altText": "Flex Message",
+                        "contents": {
+                            "type": "bubble",
+                            "hero": {
+                                "size": "4xl",
+                                "action": {
+                                    "type": "uri",
+                                    "uri": "http://linecorp.com/"
+                                },
+                                "url": "https://www.trueplookpanya.com/data/product/uploads/other4/exclamat_orange.jpg",
+                                "type": "image"
+                            },
+                            "body": {
+                                "layout": "vertical",
+                                "type": "box",
+                                "contents": [
+                                    {
+                                        "weight": "bold",
+                                        "type": "text",
+                                        "size": "xl",
+                                        "text": "' . $reResult['status'] . '"
+                                    },
+                                    {
+                                        "contents": [
+                                            {
+                                                "type": "box",
+                                                "spacing": "sm",
+                                                "layout": "baseline",
+                                                "contents": [
+                                                    {
+                                                        "color": "#aaaaaa",
+                                                        "type": "text",
+                                                        "text": "ID",
+                                                        "size": "sm"
+                                                    },
+                                                    {
+                                                        "size": "sm",
+                                                        "text": "' . $reResult['ID'] . '",
+                                                        "wrap": true,
+                                                        "color": "#666666",
+                                                        "type": "text"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "spacing": "sm",
+                                                "type": "box",
+                                                "layout": "baseline",
+                                                "contents": [
+                                                    {
+                                                        "text": "ผู้เรียก",
+                                                        "size": "sm",
+                                                        "color": "#aaaaaa",
+                                                        "type": "text"
+                                                    },
+                                                    {
+                                                        "size": "sm",
+                                                        "text": "' . $reResult['Caller'] . '",
+                                                        "color": "#666666",
+                                                        "wrap": true,
+                                                        "type": "text"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "spacing": "sm",
+                                                "type": "box",
+                                                "layout": "baseline",
+                                                "contents": [
+                                                    {
+                                                        "text": "ผู้ป่วย",
+                                                        "size": "sm",
+                                                        "color": "#aaaaaa",
+                                                        "type": "text"
+                                                    },
+                                                    {
+                                                        "size": "sm",
+                                                        "text": "' . $reResult['Patient'] . '",
+                                                        "color": "#666666",
+                                                        "wrap": true,
+                                                        "type": "text"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "box",
+                                                "spacing": "sm",
+                                                "layout": "baseline",
+                                                "contents": [
+                                                    {
+                                                        "color": "#aaaaaa",
+                                                        "type": "text",
+                                                        "text": "สถานที่รับ",
+                                                        "size": "sm"
+                                                    },
+                                                    {
+                                                        "size": "sm",
+                                                        "text": "' . $reResult['location'] . '",
+                                                        "wrap": true,
+                                                        "color": "#666666",
+                                                        "type": "text"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "box",
+                                                "spacing": "sm",
+                                                "layout": "baseline",
+                                                "contents": [
+                                                    {
+                                                        "color": "#aaaaaa",
+                                                        "type": "text",
+                                                        "text": "สถานที่ส่ง",
+                                                        "size": "sm"
+                                                    },
+                                                    {
+                                                        "size": "sm",
+                                                        "text": "' . $reResult['locations'] . '",
+                                                        "wrap": true,
+                                                        "color": "#666666",
+                                                        "type": "text"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "layout": "baseline",
+                                                "contents": [
+                                                    {
+                                                        "text": "ประเภทเปล",
+                                                        "type": "text",
+                                                        "size": "sm",
+                                                        "color": "#aaaaaa"
+                                                    },
+                                                    {
+                                                        "size": "sm",
+                                                        "type": "text",
+                                                        "wrap": true,
+                                                        "text": "' . $reResult['Type'] . '"
+                                                    }
+                                                ],
+                                                "type": "box"
+                                            },
+                                            {
+                                                "layout": "baseline",
+                                                "contents": [
+                                                    {
+                                                        "text": "ผู้รับงาน",
+                                                        "type": "text",
+                                                        "size": "sm",
+                                                        "color": "#aaaaaa"
+                                                    },
+                                                    {
+                                                        "size": "sm",
+                                                        "type": "text",
+                                                        "wrap": true,
+                                                        "text": "' . $displayName . '"
+                                                    }
+                                                ],
+                                                "type": "box"
+                                            }
                                         ],
-                                        "type" => "box"
-                                    ],
-                                    [
-                                        "layout" => "baseline",
-                                        "contents" => [
-                                            [
-                                                "text" => "ผู้รับงาน",
-                                                "type" => "text",
-                                                "size" => "sm",
-                                                "color" => "#aaaaaa"
-                                            ],
-                                            [
-                                                "size" => "sm",
-                                                "type" => "text",
-                                                "wrap" => true,
-                                                "text" => $displayName
-                                            ]
-                                        ],
-                                        "type" => "box"
-                                    ]
+                                        "type": "box",
+                                        "margin": "lg",
+                                        "spacing": "sm",
+                                        "layout": "vertical"
+                                    }
                                 ]
-                            ]
-                        ]
-                    ];
+                            }
+                        }
+                    }', true);
 
                     $responseJson = json_encode([
                         "replyToken" => $replyToken,
                         "messages" => $responemessage
                     ]);
-                    sendMessage($responseJson, ['URL' => "https://api.line.me/v2/bot/message/reply", 'AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU= ']);
+                    sendMessage($responseJson, ['URL' => "https://api.line.me/v2/bot/message/reply", 'AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
                 } else {
                     error_log("Error updating status for stretcher_register_id '$infoId': " . mysqli_error($conn));
                     $replyMessage = [
@@ -279,7 +288,7 @@ if (isset($postbackData['action']) && $postbackData['action'] == 'confirm_comple
             }
 
             if ($updateResult) {
-                $userProfile = getUserProfile($userId, ['AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU= ']);
+                $userProfile = getUserProfile($userId, ['AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
                 $displayName = $userProfile['displayName'] ?? 'Unknown User';
 
                 $replyMessage = [
@@ -294,7 +303,7 @@ if (isset($postbackData['action']) && $postbackData['action'] == 'confirm_comple
                     "messages" => $replyMessage
                 ]);
 
-                sendMessage($replyJson, ['URL' => "https://api.line.me/v2/bot/message/reply", 'AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU= ']);
+                sendMessage($replyJson, ['URL' => "https://api.line.me/v2/bot/message/reply", 'AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
             } else {
                 error_log("Error updating status for stretcher_register_id '$responseId': " . mysqli_error($conn));
                 $replyMessage = [
@@ -309,7 +318,7 @@ if (isset($postbackData['action']) && $postbackData['action'] == 'confirm_comple
                     "messages" => $replyMessage
                 ]);
 
-                sendMessage($replyJson, ['URL' => "https://api.line.me/v2/bot/message/reply", 'AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU= ']);
+                sendMessage($replyJson, ['URL' => "https://api.line.me/v2/bot/message/reply", 'AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
             }
         } else {
             error_log("Item ID '$responseId' not found in the database.");
@@ -325,7 +334,7 @@ if (isset($postbackData['action']) && $postbackData['action'] == 'confirm_comple
                 "messages" => $replyMessage
             ]);
 
-            sendMessage($replyJson, ['URL' => "https://api.line.me/v2/bot/message/reply", 'AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU= ']);
+            sendMessage($replyJson, ['URL' => "https://api.line.me/v2/bot/message/reply", 'AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
         }
     } else {
         error_log("Error executing SQL query: " . mysqli_error($conn));
@@ -341,11 +350,12 @@ if (isset($postbackData['action']) && $postbackData['action'] == 'confirm_comple
             "messages" => $replyMessage
         ]);
 
-        sendMessage($replyJson, ['URL' => "https://api.line.me/v2/bot/message/reply", 'AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU= ']);
+        sendMessage($replyJson, ['URL' => "https://api.line.me/v2/bot/message/reply", 'AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
     }
 }
 
-function sendMessage($replyJson, $token) {
+function sendMessage($replyJson, $token)
+{
     $datasReturn = [];
     $curl = curl_init();
     if ($curl === false) {
@@ -353,22 +363,25 @@ function sendMessage($replyJson, $token) {
         return ['result' => 'E', 'message' => 'cURL initialization failed'];
     }
 
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => $token['URL'],
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => "",
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 30,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "POST",
-        CURLOPT_POSTFIELDS => $replyJson,
-        CURLOPT_HTTPHEADER => array(
-            "Authorization: Bearer " . $token['AccessToken'],
-            "Cache-Control: no-cache",
-            "Content-Type: application/json; charset=UTF-8"
-        ),
-        CURLOPT_SSL_VERIFYPEER => true
-    ));
+    curl_setopt_array(
+        $curl,
+        array(
+            CURLOPT_URL => $token['URL'],
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => $replyJson,
+            CURLOPT_HTTPHEADER => array(
+                "Authorization: Bearer " . $token['AccessToken'],
+                "Cache-Control: no-cache",
+                "Content-Type: application/json; charset=UTF-8"
+            ),
+            CURLOPT_SSL_VERIFYPEER => true
+        )
+    );
 
     $result = curl_exec($curl);
     if ($result === false) {
@@ -384,15 +397,19 @@ function sendMessage($replyJson, $token) {
     return $result;
 }
 
-function getUserProfile($userId, $token) {
+function getUserProfile($userId, $token)
+{
     $curl = curl_init();
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => "https://api.line.me/v2/bot/profile/" . $userId,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER => array(
-            "Authorization: Bearer " . $token['AccessToken'],
-        ),
-    ));
+    curl_setopt_array(
+        $curl,
+        array(
+            CURLOPT_URL => "https://api.line.me/v2/bot/profile/" . $userId,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => array(
+                "Authorization: Bearer " . $token['AccessToken'],
+            ),
+        )
+    );
     $response = curl_exec($curl);
     if ($response === false) {
         error_log('Failed to fetch user profile: ' . curl_error($curl));
@@ -407,11 +424,11 @@ $replymessage = [];
 
 switch ($text) {
     case 'a':
-        $id = $reResult['ID'] ?? 'N/A';
-        $caller = $reResult['Caller'] ?? 'N/A';
-        $status = $reResult['status'] ?? 'N/A';
-        $location = $reResult['location'] ?? 'N/A';
-        $type = $reResult['Type'] ?? 'N/A';
+        $id = $reResult['ID'];
+        $caller = $reResult['Caller'];
+        $status = $reResult['status'];
+        $location = $reResult['location'];
+        $type = $reResult['Type'];
 
         $message = "ID: $id\nCaller: $caller\nStatus: $status\nLocation: $location\nType: $type";
 
@@ -424,7 +441,7 @@ switch ($text) {
     case 'ส่งงาน':
         $userId = $jsonData['events'][0]['source']['userId'] ?? null;
         if ($userId) {
-            $userProfile = getUserProfile($userId, ['AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU= ']);
+            $userProfile = getUserProfile($userId, ['AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
             $displayName = $userProfile['displayName'] ?? 'Unknown User';
             error_log("Fetched user profile: " . json_encode($userProfile));
         } else {
@@ -445,183 +462,187 @@ switch ($text) {
                 $infoId = $row['stretcher_register_id'];
                 error_log("Found job: " . json_encode($row));
 
-                $replymessage[] = [
-                    "type" => "flex",
-                    "altText" => "Flex Message",
-                    "contents" => [
-                        "type" => "bubble",
-                        "footer" => [
-                            "type" => "box",
-                            "spacing" => "sm",
-                            "layout" => "vertical",
-                            "contents" => [
-                                [
-                                    "color" => "#0077FF",
-                                    "style" => "primary",
-                                    "height" => "sm",
-                                    "type" => "button",
-                                    "action" => [
-                                        "type" => "postback",
-                                        "data" => "action=confirm_complete&itemId={$row['stretcher_register_id']}",
-                                        "label" => "ยืนยันส่งงาน"
-                                    ]
-                                ]
+                $replymessage[] = json_decode('{
+                    "type": "flex",
+                    "altText": "Flex Message",
+                    "contents": {
+                        "type": "bubble",
+                        "footer": {
+                            "type": "box",
+                            "spacing": "sm",
+                            "layout": "vertical",
+                            "contents": [
+                                {
+                                    "color": "#0077FF",
+                                    "style": "primary",
+                                    "height": "sm",
+                                    "type": "button",
+                                    "action": {
+                                        "type": "postback",
+                                        "data": "action=confirm_complete&itemId=' . $row['stretcher_register_id'] . '",
+                                        "label": "ยืนยันส่งงาน"
+                                    }
+                                }
                             ]
-                        ],
-                        "body" => [
-                            "layout" => "vertical",
-                            "type" => "box",
-                            "contents" => [
-                                [
-                                    "weight" => "bold",
-                                    "type" => "text",
-                                    "size" => "xl",
-                                    "text" => $row['stretcher_type_id'] ?? 'N/A'
-                                ],
-                                [
-                                    "type" => "box",
-                                    "spacing" => "sm",
-                                    "layout" => "baseline",
-                                    "contents" => [
-                                        [
-                                            "color" => "#aaaaaa",
-                                            "type" => "text",
-                                            "text" => "ID",
-                                            "size" => "sm"
-                                        ],
-                                        [
-                                            "size" => "sm",
-                                            "text" => $row['stretcher_register_id'] ?? 'N/A',
-                                            "wrap" => true,
-                                            "color" => "#666666",
-                                            "type" => "text"
-                                        ]
-                                    ]
-                                ],
-                                [
-                                    "spacing" => "sm",
-                                    "type" => "box",
-                                    "layout" => "baseline",
-                                    "contents" => [
-                                        [
-                                            "text" => "ผู้เรียก",
-                                            "size" => "sm",
-                                            "color" => "#aaaaaa",
-                                            "type" => "text"
-                                        ],
-                                        [
-                                            "size" => "sm",
-                                            "text" => $row['doctor_request'] ?? 'N/A',
-                                            "color" => "#666666",
-                                            "wrap" => true,
-                                            "type" => "text"
-                                        ]
-                                    ]
-                                ],
-                                [
-                                    "spacing" => "sm",
-                                    "type" => "box",
-                                    "layout" => "baseline",
-                                    "contents" => [
-                                        [
-                                            "text" => "ผู้ป่วย",
-                                            "size" => "sm",
-                                            "color" => "#aaaaaa",
-                                            "type" => "text"
-                                        ],
-                                        [
-                                            "size" => "sm",
-                                            "text" => $row['hn'] ?? 'N/A',
-                                            "color" => "#666666",
-                                            "wrap" => true,
-                                            "type" => "text"
-                                        ]
-                                    ]
-                                ],
-                                [
-                                    "type" => "box",
-                                    "spacing" => "sm",
-                                    "layout" => "baseline",
-                                    "contents" => [
-                                        [
-                                            "color" => "#aaaaaa",
-                                            "type" => "text",
-                                            "text" => "สถานที่รับ",
-                                            "size" => "sm"
-                                        ],
-                                        [
-                                            "size" => "sm",
-                                            "text" => $row['from_note'] ?? 'N/A',
-                                            "wrap" => true,
-                                            "color" => "#666666",
-                                            "type" => "text"
-                                        ]
-                                    ]
-                                ],
-                                [
-                                    "type" => "box",
-                                    "spacing" => "sm",
-                                    "layout" => "baseline",
-                                    "contents" => [
-                                        [
-                                            "color" => "#aaaaaa",
-                                            "type" => "text",
-                                            "text" => "สถานที่ส่ง",
-                                            "size" => "sm"
-                                        ],
-                                        [
-                                            "size" => "sm",
-                                            "text" => $row['send_note'] ?? 'N/A',
-                                            "wrap" => true,
-                                            "color" => "#666666",
-                                            "type" => "text"
-                                        ]
-                                    ]
-                                ],
-                                [
-                                    "layout" => "baseline",
-                                    "contents" => [
-                                        [
-                                            "text" => "ประเภทเปล",
-                                            "type" => "text",
-                                            "size" => "sm",
-                                            "color" => "#aaaaaa"
-                                        ],
-                                        [
-                                            "size" => "sm",
-                                            "type" => "text",
-                                            "wrap" => true,
-                                            "text" => $row['stretcher_work_result_detail'] ?? 'N/A'
-                                        ]
+                        },
+                        "body": {
+                            "layout": "vertical",
+                            "type": "box",
+                            "contents": [
+                                {
+                                    "weight": "bold",
+                                    "type": "text",
+                                    "size": "xl",
+                                    "text": "' . $row['stretcher_type_id'] . '"
+                                },
+                                {
+                                    "contents": [
+                                        {
+                                            "type": "box",
+                                            "spacing": "sm",
+                                            "layout": "baseline",
+                                            "contents": [
+                                                {
+                                                    "color": "#aaaaaa",
+                                                    "type": "text",
+                                                    "text": "ID",
+                                                    "size": "sm"
+                                                },
+                                                {
+                                                    "size": "sm",
+                                                    "text": "' . $row['stretcher_register_id'] . '",
+                                                    "wrap": true,
+                                                    "color": "#666666",
+                                                    "type": "text"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "spacing": "sm",
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "contents": [
+                                                {
+                                                    "text": "ผู้เรียก",
+                                                    "size": "sm",
+                                                    "color": "#aaaaaa",
+                                                    "type": "text"
+                                                },
+                                                {
+                                                    "size": "sm",
+                                                    "text": "' . $row['doctor_request'] . '",
+                                                    "color": "#666666",
+                                                    "wrap": true,
+                                                    "type": "text"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "spacing": "sm",
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "contents": [
+                                                {
+                                                    "text": "ผู้ป่วย",
+                                                    "size": "sm",
+                                                    "color": "#aaaaaa",
+                                                    "type": "text"
+                                                },
+                                                {
+                                                    "size": "sm",
+                                                    "text": "' . $row['hn'] . '",
+                                                    "color": "#666666",
+                                                    "wrap": true,
+                                                    "type": "text"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "box",
+                                            "spacing": "sm",
+                                            "layout": "baseline",
+                                            "contents": [
+                                                {
+                                                    "color": "#aaaaaa",
+                                                    "type": "text",
+                                                    "text": "สถานที่รับ",
+                                                    "size": "sm"
+                                                },
+                                                {
+                                                    "size": "sm",
+                                                    "text": "' . $row['from_note'] . '",
+                                                    "wrap": true,
+                                                    "color": "#666666",
+                                                    "type": "text"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "box",
+                                            "spacing": "sm",
+                                            "layout": "baseline",
+                                            "contents": [
+                                                {
+                                                    "color": "#aaaaaa",
+                                                    "type": "text",
+                                                    "text": "สถานที่ส่ง",
+                                                    "size": "sm"
+                                                },
+                                                {
+                                                    "size": "sm",
+                                                    "text": "' . $row['send_note'] . '",
+                                                    "wrap": true,
+                                                    "color": "#666666",
+                                                    "type": "text"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "layout": "baseline",
+                                            "contents": [
+                                                {
+                                                    "text": "ประเภทเปล",
+                                                    "type": "text",
+                                                    "size": "sm",
+                                                    "color": "#aaaaaa"
+                                                },
+                                                {
+                                                    "size": "sm",
+                                                    "type": "text",
+                                                    "wrap": true,
+                                                    "text": "' . $row['stretcher_work_result_detail'] . '"
+                                                }
+                                            ],
+                                            "type": "box"
+                                        },
+                                        {
+                                            "layout": "baseline",
+                                            "contents": [
+                                                {
+                                                    "text": "ผู้ส่งงาน",
+                                                    "type": "text",
+                                                    "size": "sm",
+                                                    "color": "#aaaaaa"
+                                                },
+                                                {
+                                                    "size": "sm",
+                                                    "type": "text",
+                                                    "wrap": true,
+                                                    "text": "' . $displayName . '"
+                                                }
+                                            ],
+                                            "type": "box"
+                                        }
                                     ],
-                                    "type" => "box"
-                                ],
-                                [
-                                    "layout" => "baseline",
-                                    "contents" => [
-                                        [
-                                            "text" => "ผู้ส่งงาน",
-                                            "type" => "text",
-                                            "size" => "sm",
-                                            "color" => "#aaaaaa"
-                                        ],
-                                        [
-                                            "size" => "sm",
-                                            "type" => "text",
-                                            "wrap" => true,
-                                            "text" => $displayName
-                                        ]
-                                    ],
-                                    "type" => "box"
-                                ]
-                            ],
-                            "type" => "box",
-                            "margin" => "lg",
-                            "spacing" => "sm",
-                            "layout" => "vertical"
-                        ]
-                    ]
-                ];
+                                    "type": "box",
+                                    "margin": "lg",
+                                    "spacing": "sm",
+                                    "layout": "vertical"
+                                }
+                            ]
+                        }
+                    }
+                }', true);
             } else {
                 error_log("No jobs found with status 1");
                 $replymessage[] = [
@@ -639,174 +660,178 @@ switch ($text) {
         break;
 
     case 'รับงาน' || 'r':
-        $replymessage[] = [
-            "type" => "flex",
-            "altText" => "Flex Message",
-            "contents" => [
-                "type" => "bubble",
-                "footer" => [
-                    "type" => "box",
-                    "spacing" => "sm",
-                    "layout" => "vertical",
-                    "contents" => [
-                        [
-                            "color" => "#0077FF",
-                            "style" => "primary",
-                            "height" => "sm",
-                            "type" => "button",
-                            "action" => [
-                                "type" => "postback",
-                                "data" => "action=accept_job&itemId={$reResult['ID']}",
-                                "label" => "รับงาน"
-                            ]
-                        ]
+        $replymessage[] = json_decode('{
+            "type": "flex",
+            "altText": "Flex Message",
+            "contents": {
+                "type": "bubble",
+                "footer": {
+                    "type": "box",
+                    "spacing": "sm",
+                    "layout": "vertical",
+                    "contents": [
+                        {
+                            "color": "#0077FF",
+                            "style": "primary",
+                            "height": "sm",
+                            "type": "button",
+                            "action": {
+                                "type": "postback",
+                                "data": "action=accept_job&itemId=' . $reResult['ID'] . '",
+                                "label": "รับงาน"
+                            }
+                        }
                     ]
-                ],
-                "hero" => [
-                    "size" => "4xl",
-                    "action" => [
-                        "type" => "uri",
-                        "uri" => "http://linecorp.com/"
-                    ],
-                    "url" => "https://www.trueplookpanya.com/data/product/uploads/other4/exclamat_orange.jpg",
-                    "type" => "image"
-                ],
-                "body" => [
-                    "layout" => "vertical",
-                    "type" => "box",
-                    "contents" => [
-                        [
-                            "weight" => "bold",
-                            "type" => "text",
-                            "size" => "xl",
-                            "text" => $reResult['status'] ?? 'N/A'
-                        ],
-                        [
-                            "type" => "box",
-                            "spacing" => "sm",
-                            "layout" => "baseline",
-                            "contents" => [
-                                [
-                                    "color" => "#aaaaaa",
-                                    "type" => "text",
-                                    "text" => "ID",
-                                    "size" => "sm"
-                                ],
-                                [
-                                    "size" => "sm",
-                                    "text" => $reResult['ID'] ?? 'N/A',
-                                    "wrap" => true,
-                                    "color" => "#666666",
-                                    "type" => "text"
-                                ]
-                            ]
-                        ],
-                        [
-                            "spacing" => "sm",
-                            "type" => "box",
-                            "layout" => "baseline",
-                            "contents" => [
-                                [
-                                    "text" => "ผู้เรียก",
-                                    "size" => "sm",
-                                    "color" => "#aaaaaa",
-                                    "type" => "text"
-                                ],
-                                [
-                                    "size" => "sm",
-                                    "text" => $reResult['Caller'] ?? 'N/A',
-                                    "color" => "#666666",
-                                    "wrap" => true,
-                                    "type" => "text"
-                                ]
-                            ]
-                        ],
-                        [
-                            "spacing" => "sm",
-                            "type" => "box",
-                            "layout" => "baseline",
-                            "contents" => [
-                                [
-                                    "text" => "ผู้ป่วย",
-                                    "size" => "sm",
-                                    "color" => "#aaaaaa",
-                                    "type" => "text"
-                                ],
-                                [
-                                    "size" => "sm",
-                                    "text" => $reResult['Patient'] ?? 'N/A',
-                                    "color" => "#666666",
-                                    "wrap" => true,
-                                    "type" => "text"
-                                ]
-                            ]
-                        ],
-                        [
-                            "type" => "box",
-                            "spacing" => "sm",
-                            "layout" => "baseline",
-                            "contents" => [
-                                [
-                                    "color" => "#aaaaaa",
-                                    "type" => "text",
-                                    "text" => "สถานที่รับ",
-                                    "size" => "sm"
-                                ],
-                                [
-                                    "size" => "sm",
-                                    "text" => $reResult['location'] ?? 'N/A',
-                                    "wrap" => true,
-                                    "color" => "#666666",
-                                    "type" => "text"
-                                ]
-                            ]
-                        ],
-                        [
-                            "type" => "box",
-                            "spacing" => "sm",
-                            "layout" => "baseline",
-                            "contents" => [
-                                [
-                                    "color" => "#aaaaaa",
-                                    "type" => "text",
-                                    "text" => "สถานที่ส่ง",
-                                    "size" => "sm"
-                                ],
-                                [
-                                    "size" => "sm",
-                                    "text" => $reResult['locations'] ?? 'N/A',
-                                    "wrap" => true,
-                                    "color" => "#666666",
-                                    "type" => "text"
-                                ]
-                            ]
-                        ],
-                        [
-                            "layout" => "baseline",
-                            "contents" => [
-                                [
-                                    "text" => "ประเภทเปล",
-                                    "type" => "text",
-                                    "size" => "sm",
-                                    "color" => "#aaaaaa"
-                                ],
-                                [
-                                    "size" => "sm",
-                                    "type" => "text",
-                                    "wrap" => true,
-                                    "text" => $reResult['Type'] ?? 'N/A'
-                                ]
+                },
+                "hero": {
+                    "size": "4xl",
+                    "action": {
+                        "type": "uri",
+                        "uri": "http://linecorp.com/"
+                    },
+                    "url": "https://www.trueplookpanya.com/data/product/uploads/other4/exclamat_orange.jpg",
+                    "type": "image"
+                },
+                "body": {
+                    "layout": "vertical",
+                    "type": "box",
+                    "contents": [
+                        {
+                            "weight": "bold",
+                            "type": "text",
+                            "size": "xl",
+                            "text": "' . $reResult['status'] . '"
+                        },
+                        {
+                            "contents": [
+                                {
+                                    "type": "box",
+                                    "spacing": "sm",
+                                    "layout": "baseline",
+                                    "contents": [
+                                        {
+                                            "color": "#aaaaaa",
+                                            "type": "text",
+                                            "text": "ID",
+                                            "size": "sm"
+                                        },
+                                        {
+                                            "size": "sm",
+                                            "text": "' . $reResult['ID'] . '",
+                                            "wrap": true,
+                                            "color": "#666666",
+                                            "type": "text"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "spacing": "sm",
+                                    "type": "box",
+                                    "layout": "baseline",
+                                    "contents": [
+                                        {
+                                            "text": "ผู้เรียก",
+                                            "size": "sm",
+                                            "color": "#aaaaaa",
+                                            "type": "text"
+                                        },
+                                        {
+                                            "size": "sm",
+                                            "text": "' . $reResult['Caller'] . '",
+                                            "color": "#666666",
+                                            "wrap": true,
+                                            "type": "text"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "spacing": "sm",
+                                    "type": "box",
+                                    "layout": "baseline",
+                                    "contents": [
+                                        {
+                                            "text": "ผู้ป่วย",
+                                            "size": "sm",
+                                            "color": "#aaaaaa",
+                                            "type": "text"
+                                        },
+                                        {
+                                            "size": "sm",
+                                            "text": "' . $reResult['Patient'] . '",
+                                            "color": "#666666",
+                                            "wrap": true,
+                                            "type": "text"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "box",
+                                    "spacing": "sm",
+                                    "layout": "baseline",
+                                    "contents": [
+                                        {
+                                            "color": "#aaaaaa",
+                                            "type": "text",
+                                            "text": "สถานที่รับ",
+                                            "size": "sm"
+                                        },
+                                        {
+                                            "size": "sm",
+                                            "text": "' . $reResult['location'] . '",
+                                            "wrap": true,
+                                            "color": "#666666",
+                                            "type": "text"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "box",
+                                    "spacing": "sm",
+                                    "layout": "baseline",
+                                    "contents": [
+                                        {
+                                            "color": "#aaaaaa",
+                                            "type": "text",
+                                            "text": "สถานที่ส่ง",
+                                            "size": "sm"
+                                        },
+                                        {
+                                            "size": "sm",
+                                            "text": "' . $reResult['locations'] . '",
+                                            "wrap": true,
+                                            "color": "#666666",
+                                            "type": "text"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "layout": "baseline",
+                                    "contents": [
+                                        {
+                                            "text": "ประเภทเปล",
+                                            "type": "text",
+                                            "size": "sm",
+                                            "color": "#aaaaaa"
+                                        },
+                                        {
+                                            "size": "sm",
+                                            "type": "text",
+                                            "wrap": true,
+                                            "text": "' . $reResult['Type'] . '"
+                                        }
+                                    ],
+                                    "type": "box"
+                                }
                             ],
-                            "type" => "box"
-                        ]
-                    ],
-                    "type" => "box",
-                    "margin" => "lg",
-                    "spacing" => "sm",
-                    "layout" => "vertical"
-                ]
-            ]
-        ];
+                            "type": "box",
+                            "margin": "lg",
+                            "spacing": "sm",
+                            "layout": "vertical"
+                        }
+                    ]
+                }
+            }
+        }', true);
         break;
 
     default:
@@ -819,7 +844,7 @@ switch ($text) {
 
 $lineData = [
     'URL' => "https://api.line.me/v2/bot/message/reply",
-    'AccessToken' => "OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU= "
+    'AccessToken' => "OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU="
 ];
 $replyJson = json_encode([
     "replyToken" => $replyToken,
