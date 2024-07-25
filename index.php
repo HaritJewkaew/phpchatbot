@@ -20,12 +20,19 @@ $userProfile = null;
 $utype = $jsonData['events'][0]['type'] ?? null;
 
 $infoId = null;
+
+function ensureNonEmpty($value, $default = "N/A") {
+    return !empty($value) ? $value : $default;
+}
+
+$reResult = array_map('ensureNonEmpty', $reResult);
+
 if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "postback") {
     parse_str($jsonData["events"][0]["postback"]["data"], $postbackData);
     if (isset($postbackData['action']) && $postbackData['action'] == 'accept_job') {
         $itemId = $postbackData['itemId'];
         $userProfile = getUserProfile($userId, ['AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
-        $displayName = $userProfile['displayName'] ?? 'Unknown User';
+        $displayName = ensureNonEmpty($userProfile['displayName'], 'Unknown User');
         $selectQuery = "SELECT stretcher_register_id FROM stretcher_register WHERE stretcher_register_id = '$itemId'";
         $selectResult = mysqli_query($conn, $selectQuery);
         if ($selectResult) {
@@ -63,7 +70,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                         "weight": "bold",
                                         "type": "text",
                                         "size": "xl",
-                                        "text": "' . ($reResult['status'] ?? 'N/A') . '"
+                                        "text": "' . $reResult['status'] . '"
                                     },
                                     {
                                         "contents": [
@@ -80,7 +87,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                                     },
                                                     {
                                                         "size": "sm",
-                                                        "text": "' . ($reResult['ID'] ?? 'N/A') . '",
+                                                        "text": "' . $reResult['ID'] . '",
                                                         "wrap": true,
                                                         "color": "#666666",
                                                         "type": "text"
@@ -100,7 +107,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                                     },
                                                     {
                                                         "size": "sm",
-                                                        "text": "' . ($reResult['Caller'] ?? 'N/A') . '",
+                                                        "text": "' . $reResult['Caller'] . '",
                                                         "color": "#666666",
                                                         "wrap": true,
                                                         "type": "text"
@@ -120,7 +127,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                                     },
                                                     {
                                                         "size": "sm",
-                                                        "text": "' . ($reResult['Patient'] ?? 'N/A') . '",
+                                                        "text": "' . $reResult['Patient'] . '",
                                                         "color": "#666666",
                                                         "wrap": true,
                                                         "type": "text"
@@ -140,7 +147,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                                     },
                                                     {
                                                         "size": "sm",
-                                                        "text": "' . ($reResult['location'] ?? 'N/A') . '",
+                                                        "text": "' . $reResult['location'] . '",
                                                         "wrap": true,
                                                         "color": "#666666",
                                                         "type": "text"
@@ -160,7 +167,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                                     },
                                                     {
                                                         "size": "sm",
-                                                        "text": "' . ($reResult['locations'] ?? 'N/A') . '",
+                                                        "text": "' . $reResult['locations'] . '",
                                                         "wrap": true,
                                                         "color": "#666666",
                                                         "type": "text"
@@ -180,7 +187,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                                         "size": "sm",
                                                         "type": "text",
                                                         "wrap": true,
-                                                        "text": "' . ($reResult['Type'] ?? 'N/A') . '"
+                                                        "text": "' . $reResult['Type'] . '"
                                                     }
                                                 ],
                                                 "type": "box"
@@ -288,7 +295,7 @@ if (isset($postbackData['action']) && $postbackData['action'] == 'confirm_comple
 
             if ($updateResult) {
                 $userProfile = getUserProfile($userId, ['AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
-                $displayName = $userProfile['displayName'] ?? 'Unknown User';
+                $displayName = ensureNonEmpty($userProfile['displayName'], 'Unknown User');
 
                 $replyMessage = [
                     [
@@ -423,11 +430,11 @@ $replymessage = [];
 
 switch ($text) {
     case 'a':
-        $id = $reResult['ID'] ?? 'N/A';
-        $caller = $reResult['Caller'] ?? 'N/A';
-        $status = $reResult['status'] ?? 'N/A';
-        $location = $reResult['location'] ?? 'N/A';
-        $type = $reResult['Type'] ?? 'N/A';
+        $id = $reResult['ID'];
+        $caller = $reResult['Caller'];
+        $status = $reResult['status'];
+        $location = $reResult['location'];
+        $type = $reResult['Type'];
 
         $message = "ID: $id\nCaller: $caller\nStatus: $status\nLocation: $location\nType: $type";
 
@@ -441,7 +448,7 @@ switch ($text) {
         $userId = $jsonData['events'][0]['source']['userId'] ?? null;
         if ($userId) {
             $userProfile = getUserProfile($userId, ['AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
-            $displayName = $userProfile['displayName'] ?? 'Unknown User';
+            $displayName = ensureNonEmpty($userProfile['displayName'], 'Unknown User');
             error_log("Fetched user profile: " . json_encode($userProfile));
         } else {
             $displayName = 'Unknown User';
@@ -492,7 +499,7 @@ switch ($text) {
                                     "weight": "bold",
                                     "type": "text",
                                     "size": "xl",
-                                    "text": "' . ($row['stretcher_type_id'] ?? 'N/A') . '"
+                                    "text": "' . ensureNonEmpty($row['stretcher_type_id']) . '"
                                 },
                                 {
                                     "contents": [
@@ -509,7 +516,7 @@ switch ($text) {
                                                 },
                                                 {
                                                     "size": "sm",
-                                                    "text": "' . ($row['stretcher_register_id'] ?? 'N/A') . '",
+                                                    "text": "' . ensureNonEmpty($row['stretcher_register_id']) . '",
                                                     "wrap": true,
                                                     "color": "#666666",
                                                     "type": "text"
@@ -529,7 +536,7 @@ switch ($text) {
                                                 },
                                                 {
                                                     "size": "sm",
-                                                    "text": "' . ($row['doctor_request'] ?? 'N/A') . '",
+                                                    "text": "' . ensureNonEmpty($row['doctor_request']) . '",
                                                     "color": "#666666",
                                                     "wrap": true,
                                                     "type": "text"
@@ -549,7 +556,7 @@ switch ($text) {
                                                 },
                                                 {
                                                     "size": "sm",
-                                                    "text": "' . ($row['hn'] ?? 'N/A') . '",
+                                                    "text": "' . ensureNonEmpty($row['hn']) . '",
                                                     "color": "#666666",
                                                     "wrap": true,
                                                     "type": "text"
@@ -569,7 +576,7 @@ switch ($text) {
                                                 },
                                                 {
                                                     "size": "sm",
-                                                    "text": "' . ($row['from_note'] ?? 'N/A') . '",
+                                                    "text": "' . ensureNonEmpty($row['from_note']) . '",
                                                     "wrap": true,
                                                     "color": "#666666",
                                                     "type": "text"
@@ -589,7 +596,7 @@ switch ($text) {
                                                 },
                                                 {
                                                     "size": "sm",
-                                                    "text": "' . ($row['send_note'] ?? 'N/A') . '",
+                                                    "text": "' . ensureNonEmpty($row['send_note']) . '",
                                                     "wrap": true,
                                                     "color": "#666666",
                                                     "type": "text"
@@ -609,7 +616,7 @@ switch ($text) {
                                                     "size": "sm",
                                                     "type": "text",
                                                     "wrap": true,
-                                                    "text": "' . ($row['stretcher_work_result_detail'] ?? 'N/A') . '"
+                                                    "text": "' . ensureNonEmpty($row['stretcher_work_result_detail']) . '"
                                                 }
                                             ],
                                             "type": "box"
@@ -676,7 +683,7 @@ switch ($text) {
                             "type": "button",
                             "action": {
                                 "type": "postback",
-                                "data": "action=accept_job&itemId=' . ($reResult['ID'] ?? 'N/A') . '",
+                                "data": "action=accept_job&itemId=' . $reResult['ID'] . '",
                                 "label": "รับงาน"
                             }
                         }
@@ -699,7 +706,7 @@ switch ($text) {
                             "weight": "bold",
                             "type": "text",
                             "size": "xl",
-                            "text": "' . ($reResult['status'] ?? 'N/A') . '"
+                            "text": "' . $reResult['status'] . '"
                         },
                         {
                             "contents": [
@@ -716,7 +723,7 @@ switch ($text) {
                                         },
                                         {
                                             "size": "sm",
-                                            "text": "' . ($reResult['ID'] ?? 'N/A') . '",
+                                            "text": "' . $reResult['ID'] . '",
                                             "wrap": true,
                                             "color": "#666666",
                                             "type": "text"
@@ -736,7 +743,7 @@ switch ($text) {
                                         },
                                         {
                                             "size": "sm",
-                                            "text": "' . ($reResult['Caller'] ?? 'N/A') . '",
+                                            "text": "' . $reResult['Caller'] . '",
                                             "color": "#666666",
                                             "wrap": true,
                                             "type": "text"
@@ -756,7 +763,7 @@ switch ($text) {
                                         },
                                         {
                                             "size": "sm",
-                                            "text": "' . ($reResult['Patient'] ?? 'N/A') . '",
+                                            "text": "' . $reResult['Patient'] . '",
                                             "color": "#666666",
                                             "wrap": true,
                                             "type": "text"
@@ -776,7 +783,7 @@ switch ($text) {
                                         },
                                         {
                                             "size": "sm",
-                                            "text": "' . ($reResult['location'] ?? 'N/A') . '",
+                                            "text": "' . $reResult['location'] . '",
                                             "wrap": true,
                                             "color": "#666666",
                                             "type": "text"
@@ -796,7 +803,7 @@ switch ($text) {
                                         },
                                         {
                                             "size": "sm",
-                                            "text": "' . ($reResult['locations'] ?? 'N/A') . '",
+                                            "text": "' . $reResult['locations'] . '",
                                             "wrap": true,
                                             "color": "#666666",
                                             "type": "text"
@@ -816,7 +823,7 @@ switch ($text) {
                                             "size": "sm",
                                             "type": "text",
                                             "wrap": true,
-                                            "text": "' . ($reResult['Type'] ?? 'N/A') . '"
+                                            "text": "' . $reResult['Type'] . '"
                                         }
                                     ],
                                     "type": "box"
