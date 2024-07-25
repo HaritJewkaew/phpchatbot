@@ -1,6 +1,6 @@
 <?php
 include("components/query.php");
-include("components/line_function.php");
+include("components/line_functions.php");
 include("components/flex_message.php");
 
 $LINEData = file_get_contents('php://input');
@@ -36,7 +36,6 @@ function handlePostback($jsonData, $reResult, $userId, $replyToken) {
     parse_str($jsonData["events"][0]["postback"]["data"], $postbackData);
     $action = $postbackData['action'] ?? null;
     if ($action == 'accept_job') {
-        error_log("Postback action 'accept_job' triggered.");
         $itemId = $postbackData['itemId'];
         $userProfile = getUserProfile($userId, ['AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
         $displayName = ensureNonEmpty($userProfile['displayName'], 'Unknown User');
@@ -54,7 +53,6 @@ function handlePostback($jsonData, $reResult, $userId, $replyToken) {
                 }
 
                 if ($updateResult) {
-                    error_log("Job accepted successfully: " . json_encode($reResult));
                     $responemessage[] = createFlexMessage($reResult, $displayName);
 
                     $responseJson = json_encode([
@@ -101,7 +99,7 @@ function handleTextMessage($text, $reResult, $replyToken, $jsonData) {
 
         case 'รับงาน':
         case 'r':
-            handleReceiveJob($reResult, $replymessage);
+            $replymessage[] = createReceiveJobFlexMessage($reResult);
             break;
 
         default:
@@ -168,11 +166,6 @@ function handleSendJob($jsonData, &$replymessage) {
             "text" => "Sorry, there was an error checking your jobs. Please try again later."
         ];
     }
-}
-
-function handleReceiveJob($reResult, &$replymessage) {
-    global $conn;
-    $replymessage[] = createReceiveJobFlexMessage($reResult);
 }
 
 function confirmComplete($postbackData, $replyToken, $userId) {
