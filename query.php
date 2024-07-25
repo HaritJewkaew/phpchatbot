@@ -15,23 +15,23 @@ function getRequestResult() {
         "reciver"=> "",
         "patientID"=> "",
     );
-    $sql = "SELECT * FROM stretcher_register WHERE stretcher_work_status_id = 1";
+    $sql = "SELECT * FROM request WHERE สถานะ = 1";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
         $urgentRowFound = false;
         while ($row = $result->fetch_assoc()) {
-            if ($row['stretcher_type_id'] == '4') {
-                $requestResult['ID'] = $row['stretcher_register_id'];
-                $requestResult['Caller'] = $row['doctor_request'];
-                $requestResult['status'] = $row['stretcher_type_id'];
-                $requestResult['location'] = $row['from_note'];
-                $requestResult['Type'] = $row['stretcher_work_result_detail'];
-                $requestResult['locations'] = $row['send_note'];
+            if ($row['ความเร่งด่วน'] == 'ด่วนมาก') {
+                $requestResult['ID'] = $row['Info_id'];
+                $requestResult['Caller'] = $row['ผู้เรียก'];
+                $requestResult['status'] = $row['ความเร่งด่วน'];
+                $requestResult['location'] = $row['สถานที่รับ'];
+                $requestResult['Type'] = $row['ประเภทเปล'];
+                $requestResult['locations'] = $row['สถานที่ส่ง'];
                 //$requestResult['Sender'] = $row['ผู้ส่ง'];
-                //$requestResult['Patient'] = $row['ชื่อผู้ป่วย'];
-                $requestResult['PatientID'] = $row['hn'];
+                $requestResult['Patient'] = $row['ชื่อผู้ป่วย'];
+                $requestResult['PatientID'] = $row['รหัสผู้ป่วย'];
                 $requestResult['reciver'] = $row['ผู้รับ'];
                 $urgentRowFound = true;
                 break;
@@ -41,16 +41,16 @@ function getRequestResult() {
         if (!$urgentRowFound) {
             mysqli_data_seek($result, 0);
             while ($row = $result->fetch_assoc()) {
-                if ($row['stretcher_type_id'] == '4') {
-                    $requestResult['ID'] = $row['stretcher_register_id'];
-                    $requestResult['Caller'] = $row['doctor_request'];
-                    $requestResult['status'] = $row['stretcher_type_id'];
-                    $requestResult['location'] = $row['from_note'];
-                    $requestResult['Type'] = $row['stretcher_work_result_detail'];
-                    $requestResult['locations'] = $row['send_note'];
+                if ($row['ความเร่งด่วน'] == 'ด่วน') {
+                    $requestResult['ID'] = $row['Info_id'];
+                    $requestResult['Caller'] = $row['ผู้เรียก'];
+                    $requestResult['status'] = $row['ความเร่งด่วน'];
+                    $requestResult['location'] = $row['สถานที่รับ'];
+                    $requestResult['Type'] = $row['ประเภทเปล'];
+                    $requestResult['locations'] = $row['สถานที่ส่ง'];
                     //$requestResult['Sender'] = $row['ผู้ส่ง'];
-                    $requestResult['PatientID'] = $row['hn'];
-                    //$requestResult['Patient'] = $row['ชื่อผู้ป่วย'];
+                    $requestResult['PatientID'] = $row['รหัสผู้ป่วย'];
+                    $requestResult['Patient'] = $row['ชื่อผู้ป่วย'];
                     $requestResult['reciver'] = $row['ผู้รับ'];
                 }
             }
