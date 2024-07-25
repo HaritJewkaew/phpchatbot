@@ -37,7 +37,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
       $row = mysqli_fetch_assoc($selectResult);
       if ($row) {
         $infoId = $row['stretcher_register_id'];
-        $updateQuery = "UPDATE stretcher_register SET สถานะ = 1 WHERE stretcher_register_id = '$infoId'";
+        $updateQuery = "UPDATE stretcher_register SET stretcher_work_status_id = 1 WHERE stretcher_register_id = '$infoId'";
         $updateReQuery = "UPDATE stretcher_register SET ผู้รับ = '$displayName' WHERE stretcher_register_id = '$infoId'";
         
 
@@ -292,12 +292,12 @@ if (isset($postbackData['action']) && $postbackData['action'] == 'confirm_comple
   if ($selectResult) {
       $row = mysqli_fetch_assoc($selectResult);
       if ($row) {
-          $updateQuery = "UPDATE stretcher_register SET สถานะ = 2, เวลา = NOW() WHERE stretcher_register_id = '$responseId'";
+          $updateQuery = "UPDATE stretcher_register SET stretcher_work_status_id = 2, เวลา = NOW() WHERE stretcher_register_id = '$responseId'";
 
           try {
               $updateResult = mysqli_query($conn, $updateQuery);
           } catch (\Throwable $th) {
-              error_log("Error updating status for Info_id '$responseId': " . $th->getMessage());
+              error_log("Error updating status for stretcher_register_id '$responseId': " . $th->getMessage());
           }
 
           if ($updateResult) {
@@ -642,7 +642,7 @@ switch ($text) {
     // Log the displayName for debugging
     error_log("Display Name: $displayName");
 
-    $checkQuery = "SELECT * FROM stretcher_register WHERE ผู้รับ = '$displayName' AND สถานะ = 1 LIMIT 1";
+    $checkQuery = "SELECT * FROM stretcher_register WHERE ผู้รับ = '$displayName' AND stretcher_work_status_id = 1 LIMIT 1";
     
     // Log the SQL query for debugging
     error_log("SQL Query: $checkQuery");
@@ -685,7 +685,7 @@ switch ($text) {
                                 "weight": "bold",
                                 "type": "text",
                                 "size": "xl",
-                                "text": "' . $row['ความเร่งด่วน'] . '"
+                                "text": "' . $row['stretcher_type_id'] . '"
                             },
                             {
                                 "contents": [
@@ -735,7 +735,7 @@ switch ($text) {
                                         "layout": "baseline",
                                         "contents": [
                                             {
-                                                "text": "รหัสผู้ป่วย",
+                                                "text": "ผู้ป่วย",
                                                 "size": "sm",
                                                 "color": "#aaaaaa",
                                                 "type": "text"
@@ -762,7 +762,7 @@ switch ($text) {
                                             },
                                             {
                                                 "size": "sm",
-                                                "text": "' . $row['สถานที่รับ'] . '",
+                                                "text": "' . $row['from_note'] . '",
                                                 "wrap": true,
                                                 "color": "#666666",
                                                 "type": "text"
@@ -782,7 +782,7 @@ switch ($text) {
                                             },
                                             {
                                                 "size": "sm",
-                                                "text": "' . $row['สถานที่ส่ง'] . '",
+                                                "text": "' . $row['send_note'] . '",
                                                 "wrap": true,
                                                 "color": "#666666",
                                                 "type": "text"
@@ -802,7 +802,7 @@ switch ($text) {
                                                 "size": "sm",
                                                 "type": "text",
                                                 "wrap": true,
-                                                "text": "' . $row['ประเภทเปล'] . '"
+                                                "text": "' . $row['stretcher_work_result_detail'] . '"
                                             }
                                         ],
                                         "type": "box"
@@ -943,7 +943,7 @@ switch ($text) {
                     "layout": "baseline",
                     "contents": [
                       {
-                        "text": "รหัสผู้ป่วย",
+                        "text": "ผู้ป่วย",
                         "size": "sm",
                         "color": "#aaaaaa",
                         "type": "text"
