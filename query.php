@@ -43,7 +43,7 @@ function getRequestResult() {
                     $requestResult['Caller'] = $row['doctor_request'];
                     $requestResult['status'] = $typeMapping[$row['stretcher_type_id']];
                     $requestResult['location'] = $row['from_note'];
-                    $requestResult['Type'] = $row['stretcher_work_result_detail'];
+                    $requestResult['Type'] = $row['stretcher_type_id'];
                     $requestResult['locations'] = $row['send_note'];
                     $requestResult['Patient'] = $row['hn'];
                     $requestResult['reciver'] = $row['ผู้รับ'];

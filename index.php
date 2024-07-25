@@ -21,7 +21,7 @@ $utype = $jsonData['events'][0]['type'] ?? null;
 
 $infoId = null;
 
-function ensureNonEmpty($value, $default = "N/A") {
+function ensureNonEmpty($value, $default = "ไม่ระบุ") {
     return !empty($value) ? $value : $default;
 }
 
@@ -616,7 +616,7 @@ switch ($text) {
                                                     "size": "sm",
                                                     "type": "text",
                                                     "wrap": true,
-                                                    "text": "' . ensureNonEmpty($row['stretcher_work_result_detail']) . '"
+                                                    "text": "' . ensureNonEmpty($row['stretcher_type_id']) . '"
                                                 }
                                             ],
                                             "type": "box"
