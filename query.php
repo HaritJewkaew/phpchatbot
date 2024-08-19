@@ -25,7 +25,7 @@ function getRequestResult() {
     );
 
 
-    $sql = "SELECT * FROM stretcher_register WHERE stretcher_work_status_id = 1";
+    $sql = "SELECT * FROM stretcher_register WHERE stretcher_priority_id = 1";
     error_log("Executing query: $sql");
 
     $stmt = $conn->prepare($sql);
@@ -38,13 +38,13 @@ function getRequestResult() {
         for ($priority = 5; $priority >= 1; $priority--) {
             mysqli_data_seek($result, 0);
             while ($row = $result->fetch_assoc()) {
-                if ($row['stretcher_type_id'] == $priority) {
+                if ($row['stretcher_work_status_id'] == $priority) {
                     $requestResult['ID'] = $row['stretcher_register_id'];
                     $requestResult['Caller'] = $row['doctor_request'];
-                    $requestResult['status'] = $typeMapping[$row['stretcher_type_id']];
-                    $requestResult['location'] = $row['from_note'];
+                    $requestResult['status'] = $typeMapping[$row['stretcher_work_status_id']];
+                    $requestResult['location'] = $row['from_depcode'];
                     $requestResult['Type'] = $row['stretcher_type_id'];
-                    $requestResult['locations'] = $row['send_note'];
+                    $requestResult['locations'] = $row['send_depcode'];
                     $requestResult['Patient'] = $row['hn'];
                     $requestResult['reciver'] = $row['ผู้รับ'];
                     $found = true;
@@ -54,7 +54,7 @@ function getRequestResult() {
             if ($found) break;
         }
     } else {
-        error_log("No rows found with stretcher_work_status_id = 1");
+        error_log("No rows found with stretcher_priority_id = 1");
     }
 
     $stmt->close();

@@ -39,7 +39,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
             $row = mysqli_fetch_assoc($selectResult);
             if ($row) {
                 $infoId = $row['stretcher_register_id'];
-                $updateQuery = "UPDATE stretcher_register SET stretcher_work_status_id = 1, ผู้รับ = '$displayName' WHERE stretcher_register_id = '$infoId'";
+                $updateQuery = "UPDATE stretcher_register SET stretcher_priority_id = 1, ผู้รับ = '$displayName' WHERE stretcher_register_id = '$infoId'";
 
                 try {
                     $updateResult = mysqli_query($conn, $updateQuery);
@@ -285,7 +285,7 @@ if (isset($postbackData['action']) && $postbackData['action'] == 'confirm_comple
     if ($selectResult) {
         $row = mysqli_fetch_assoc($selectResult);
         if ($row) {
-            $updateQuery = "UPDATE stretcher_register SET stretcher_work_status_id = 2, lastupdate = NOW() WHERE stretcher_register_id = '$responseId'";
+            $updateQuery = "UPDATE stretcher_register SET stretcher_priority_id = 2, lastupdate = NOW() WHERE stretcher_register_id = '$responseId'";
 
             try {
                 $updateResult = mysqli_query($conn, $updateQuery);
@@ -457,7 +457,7 @@ switch ($text) {
 
         error_log("Display Name: $displayName");
 
-        $checkQuery = "SELECT * FROM stretcher_register WHERE ผู้รับ = '$displayName' AND stretcher_work_status_id = 1 LIMIT 1";
+        $checkQuery = "SELECT * FROM stretcher_register WHERE ผู้รับ = '$displayName' AND stretcher_priority_id = 1 LIMIT 1";
 
         error_log("SQL Query: $checkQuery");
 
@@ -576,7 +576,7 @@ switch ($text) {
                                                 },
                                                 {
                                                     "size": "sm",
-                                                    "text": "' . ensureNonEmpty($row['from_note']) . '",
+                                                    "text": "' . ensureNonEmpty($row['from_depcode']) . '",
                                                     "wrap": true,
                                                     "color": "#666666",
                                                     "type": "text"
@@ -596,7 +596,7 @@ switch ($text) {
                                                 },
                                                 {
                                                     "size": "sm",
-                                                    "text": "' . ensureNonEmpty($row['send_note']) . '",
+                                                    "text": "' . ensureNonEmpty($row['send_depcode']) . '",
                                                     "wrap": true,
                                                     "color": "#666666",
                                                     "type": "text"
