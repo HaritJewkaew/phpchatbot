@@ -59,7 +59,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                     "type": "uri",
                                     "uri": "http://linecorp.com/"
                                 },
-                                "url": "https://www.trueplookpanya.com/data/product/uploads/other4/exclamat_orange.jpg",
+                                "url": "https://www.shutterstock.com/image-vector/paramedic-ambulance-cartoon-icon-two-600nw-2031909938.jpg",
                                 "type": "image"
                             },
                             "body": {
@@ -473,13 +473,23 @@ switch ($text) {
                     "altText": "Flex Message",
                     "contents": {
                         "type": "bubble",
+                        "hero": {
+                                "size": "4xl",
+                                "action": {
+                                    "type": "uri",
+                                    "uri": "http://linecorp.com/"
+                                },
+                                "url": "https://www.liveabout.com/thmb/xTTyi29IHanpx5rKeBjppqyi15Q=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/email-marketing-670736676-5bc8b28446e0fb0051b370f4.jpg",
+                                "type": "image"
+                            },
+
                         "footer": {
                             "type": "box",
                             "spacing": "sm",
                             "layout": "vertical",
                             "contents": [
                                 {
-                                    "color": "#0077FF",
+                                    "color": "#00A36C",
                                     "style": "primary",
                                     "height": "sm",
                                     "type": "button",
@@ -549,7 +559,7 @@ switch ($text) {
                                             "layout": "baseline",
                                             "contents": [
                                                 {
-                                                    "text": "ผู้ป่วย",
+                                                    "text": "HN",
                                                     "size": "sm",
                                                     "color": "#aaaaaa",
                                                     "type": "text"
@@ -677,7 +687,7 @@ switch ($text) {
                     "layout": "vertical",
                     "contents": [
                         {
-                            "color": "#0077FF",
+                            "color": "#00A36C",
                             "style": "primary",
                             "height": "sm",
                             "type": "button",
@@ -695,7 +705,7 @@ switch ($text) {
                         "type": "uri",
                         "uri": "http://linecorp.com/"
                     },
-                    "url": "https://www.trueplookpanya.com/data/product/uploads/other4/exclamat_orange.jpg",
+                    "url": "https://www.shutterstock.com/image-vector/paramedic-ambulance-cartoon-icon-two-600nw-2031909938.jpg",
                     "type": "image"
                 },
                 "body": {
@@ -756,7 +766,7 @@ switch ($text) {
                                     "layout": "baseline",
                                     "contents": [
                                         {
-                                            "text": "ผู้ป่วย",
+                                            "text": "HN",
                                             "size": "sm",
                                             "color": "#aaaaaa",
                                             "type": "text"
