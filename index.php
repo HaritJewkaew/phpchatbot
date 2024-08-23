@@ -479,7 +479,7 @@ switch ($text) {
                                     "type": "uri",
                                     "uri": "http://linecorp.com/"
                                 },
-                                "url": "https://www.liveabout.com/thmb/xTTyi29IHanpx5rKeBjppqyi15Q=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/email-marketing-670736676-5bc8b28446e0fb0051b370f4.jpg",
+                                "url": "https://img.freepik.com/premium-vector/continuous-one-line-drawing-medical-team-resuscitates-affected-person-doctor-take-patient-gurney_533993-27953.jpg?w=996",
                                 "type": "image"
                             },
 
@@ -687,7 +687,7 @@ switch ($text) {
                     "layout": "vertical",
                     "contents": [
                         {
-                            "color": "#00A36C",
+                            "color": "#2fb7e7",
                             "style": "primary",
                             "height": "sm",
                             "type": "button",
@@ -705,7 +705,7 @@ switch ($text) {
                         "type": "uri",
                         "uri": "http://linecorp.com/"
                     },
-                    "url": "https://www.shutterstock.com/image-vector/paramedic-ambulance-cartoon-icon-two-600nw-2031909938.jpg",
+                    "url": "https://img.freepik.com/premium-vector/continuous-one-line-drawing-medical-team-resuscitates-affected-person-doctor-take-patient-gurney_533993-27953.jpg?w=996",
                     "type": "image"
                 },
                 "body": {
