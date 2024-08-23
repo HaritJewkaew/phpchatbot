@@ -59,7 +59,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                     "type": "uri",
                                     "uri": "http://linecorp.com/"
                                 },
-                                "url": "https://www.shutterstock.com/image-vector/paramedic-ambulance-cartoon-icon-two-600nw-2031909938.jpg",
+                                "url": "https://img.freepik.com/premium-vector/continuous-one-line-drawing-medical-team-resuscitates-affected-person-doctor-take-patient-gurney_533993-27953.jpg?w=996",
                                 "type": "image"
                             },
                             "body": {
