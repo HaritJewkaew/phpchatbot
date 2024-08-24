@@ -1,5 +1,5 @@
 <?php
-include("conn.php");
+include("db.php");
 
 function getRequestResult() {
     global $conn;
@@ -14,6 +14,8 @@ function getRequestResult() {
         "Patient"=> "",
         "reciver"=> "",
         "PatientID"=> "",
+        "stc_send_time"=> "",
+        "stc_return_time"=> "",
     );
 
     $typeMapping = array(
@@ -47,6 +49,8 @@ function getRequestResult() {
                     $requestResult['locations'] = $row['send_depcode'];
                     $requestResult['Patient'] = $row['hn'];
                     $requestResult['reciver'] = $row['ผู้รับ'];
+                    $requestResult['stc_send_time'] = $row['เวลารับ'];
+                    $requestResult['stc_return_time'] = $row['เวลาส่ง'];
                     $found = true;
                     break;
                 }
