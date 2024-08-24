@@ -67,12 +67,6 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                 "type": "box",
                                 "contents": [
                                     {
-                                        "weight": "bold",
-                                        "type": "text",
-                                        "size": "xl",
-                                        "text": "' . $reResult['status'] . '"
-                                    },
-                                    {
                                         "contents": [
                                             {
                                                 "type": "box",
@@ -120,7 +114,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                                 "layout": "baseline",
                                                 "contents": [
                                                     {
-                                                        "text": "ผู้ป่วย",
+                                                        "text": "HN",
                                                         "size": "sm",
                                                         "color": "#aaaaaa",
                                                         "type": "text"
@@ -712,12 +706,6 @@ switch ($text) {
                     "layout": "vertical",
                     "type": "box",
                     "contents": [
-                        {
-                            "weight": "bold",
-                            "type": "text",
-                            "size": "xl",
-                            "text": "' . $reResult['status'] . '"
-                        },
                         {
                             "contents": [
                                 {
