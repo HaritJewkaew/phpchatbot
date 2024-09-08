@@ -66,7 +66,6 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                 "layout": "vertical",
                                 "type": "box",
                                 "contents": [
-                                    
                                     {
                                         "contents": [
                                             {
@@ -426,18 +425,22 @@ $replymessage = [];
 switch ($text) {
     case 'เช็คงาน':
         $id = $reResult['ID'];
-        $caller = $reResult['Caller'];
-        $status = $reResult['status'];
-        $location = $reResult['location'];
-        $type = $reResult['Type'];
-
-        $message = "ID: $id\nCaller: $caller\nStatus: $status\nLocation: $location\nType: $type";
-
+        $checkQuery = "SELECT `stretcher_register_id` FROM `stretcher_register` WHERE `stretcher_priority_id` = 1;";
+        error_log("SQL Query: $checkQuery");
+        
+        $checkResult = mysqli_query($conn, $checkQuery);
+        if ($checkResult) {
+            $row = mysqli_fetch_assoc($checkResult);
+            if ($row) {
+                $infoId = $row['stretcher_register_id'];
+                error_log("Found job: " . json_encode($row));
+            }
         $replymessage[] = [
             "type" => "text",
             "text" => $message
         ];
         break;
+    }
 
     case 'ส่งงาน':
         $userId = $jsonData['events'][0]['source']['userId'] ?? null;
@@ -504,7 +507,7 @@ switch ($text) {
                                     "weight": "bold",
                                     "type": "text",
                                     "size": "xl",
-                                    "text": "' . ensureNonEmpty($row['stretcher_type_id']) . '"
+                                    "text": "ส่งงาน"
                                 },
                                 {
                                     "contents": [
