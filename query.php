@@ -1,10 +1,31 @@
 <?php
 include("conn.php");
 
+// Function to get the department name from the kskdepartment table based on depcode
+function getDepartmentName($depcode) {
+    global $conn;
+    
+    $sql = "SELECT department FROM kskdepartment WHERE depcode = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $depcode);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row['department'];
+    } else {
+        return $depcode; // Return the depcode itself if no department is found
+    }
+
+    $stmt->close();
+}
+
+// Function to get the request result and transform depcode to department name
 function getRequestResult() {
     global $conn;
     $requestResult = array(
-        "ID"=> "1",
+        "ID"=> "",
         "Caller"=> "",
         "status"=> "",
         "location"=> "",
@@ -18,6 +39,7 @@ function getRequestResult() {
         "stc_return_time"=> "",
     );
 
+    // Mapping for status types
     $typeMapping = array(
         1 => 'ไม่ด่วน',   
         2 => 'น้อย',     
@@ -26,6 +48,7 @@ function getRequestResult() {
         5 => 'ด่วนมาก'    
     );
     
+    // Mapping for stretcher types
     $stcType = array(
         1 => 'นอน',
         3 => 'นั่ง',
@@ -33,51 +56,47 @@ function getRequestResult() {
         5 => 'ล้อเข็นนอนออกซิเจน'
     );
     
-
-    $sql = "SELECT * FROM stretcher_register WHERE stretcher_priority_id = 1";
+    // SQL query to get the highest priority stretcher request
+    $sql = "SELECT * FROM stretcher_register 
+            WHERE stretcher_priority_id = 1 
+            ORDER BY stretcher_work_status_id DESC 
+            LIMIT 1";
+    
     error_log("Executing query: $sql");
-
-
-    $sql = "SELECT * FROM kskdepartment WHERE depcode = ";
-    error_log("Executing query: $sql");
-
 
     $stmt = $conn->prepare($sql);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    
+    if ($stmt) {
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    if ($result->num_rows > 0) {
-        $found = false;
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            
+            // Fill request result array with data
+            $requestResult['ID'] = $row['stretcher_register_id'] ?? '';
+            $requestResult['Caller'] = $row['doctor_request'] ?? '';
+            $requestResult['status'] = $typeMapping[$row['stretcher_work_status_id']] ?? '';
+            
+            // Transform depcode to department name
+            $requestResult['location'] = getDepartmentName($row['from_depcode'] ?? '');
+            $requestResult['locations'] = getDepartmentName($row['send_depcode'] ?? '');
 
-        for ($priority = 5; $priority >= 1; $priority--) {
-            mysqli_data_seek($result, 0);
-            while ($row = $result->fetch_assoc()) {
-                if ($row['stretcher_work_status_id'] == $priority) {
-                    $requestResult['ID'] = $row['stretcher_register_id'];
-                    $requestResult['Caller'] = $row['doctor_request'];
-                    $requestResult['status'] = $typeMapping[$row['stretcher_work_status_id']];
-                    $requestResult['location'] = $row['from_depcode'];
-                    $requestResult['Type'] = $stcType[$row['stretcher_type_id']];
-                    $requestResult['locations'] = $row['send_depcode'];
-                    $requestResult['Patient'] = $row['hn'];
-                    $requestResult['reciver'] = $row['ผู้รับ'];
-                    $requestResult['stc_send_time'] = $row['เวลารับ'];
-                    $requestResult['stc_return_time'] = $row['เวลาส่ง'];
+            $requestResult['Type'] = $stcType[$row['stretcher_type_id']] ?? '';
+            $requestResult['Patient'] = $row['hn'] ?? '';
+            $requestResult['reciver'] = $row['ผู้รับ'] ?? '';
+            $requestResult['stc_send_time'] = $row['เวลารับ'] ?? '';
+            $requestResult['stc_return_time'] = $row['เวลาส่ง'] ?? '';
 
-                    $found = true;
-                    break;
-                }
-            }
-            if ($found) break;
+        } else {
+            error_log("No rows found with stretcher_priority_id = 1");
         }
+
+        $stmt->close();
     } else {
-        error_log("No rows found with stretcher_priority_id = 1");
+        error_log("Error preparing the query: " . $conn->error);
     }
 
-    $stmt->close();
     return $requestResult;
-
-
-
 }
 ?>
