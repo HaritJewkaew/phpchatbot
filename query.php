@@ -21,7 +21,25 @@ function getDepartmentName($depcode) {
     $stmt->close();
 }
 
-// Function to get the request result and transform depcode to department name
+// Function to get the request result and transform Line_name to name
+function getR_Name($LIname) {
+    global $conn;
+    
+    $sql = "SELECT R_name FROM stretcher_request_staff WHERE Line_name = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $LIname);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row['R_name'];
+    } else {
+        return $LIname; // Return the depcode itself if no department is found
+    }
+
+    $stmt->close();
+}
 function getRequestResult() {
     global $conn;
     $requestResult = array(
@@ -84,7 +102,10 @@ function getRequestResult() {
 
             $requestResult['Type'] = $stcType[$row['stretcher_type_id']] ?? '';
             $requestResult['Patient'] = $row['hn'] ?? '';
-            $requestResult['reciver'] = $row['ผู้รับ'] ?? '';
+            
+            // Transform ผู้รับ to R_name
+            $requestResult['reciver'] = getR_Name($row['ผู้รับ'] ?? '');
+
             $requestResult['stc_send_time'] = $row['เวลารับ'] ?? '';
             $requestResult['stc_return_time'] = $row['เวลาส่ง'] ?? '';
 

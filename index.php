@@ -199,7 +199,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                                         "size": "sm",
                                                         "type": "text",
                                                         "wrap": true,
-                                                        "text": "' . $displayName . '"
+                                                        "text": "' . $reResult['reciver'] . '"
                                                     }
                                                 ],
                                                 "type": "box"
@@ -290,6 +290,7 @@ if (isset($postbackData['action']) && $postbackData['action'] == 'confirm_comple
             if ($updateResult) {
                 $userProfile = getUserProfile($userId, ['AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
                 $displayName = ensureNonEmpty($userProfile['displayName'], 'Unknown User');
+                
 
                 $replyMessage = [
                     [
@@ -421,8 +422,8 @@ function getUserProfile($userId, $token)
 }
 
 $replymessage = [];
-
 switch ($text) {
+
     case 'เช็คงาน':
         $id = $reResult['ID'];
         $checkQuery = "SELECT `stretcher_register_id` FROM `stretcher_register` WHERE `stretcher_priority_id` = 1;";
@@ -454,11 +455,20 @@ switch ($text) {
         }
 
         error_log("Display Name: $displayName");
-
-        $checkQuery = "SELECT * FROM stretcher_register WHERE ผู้รับ = '$displayName' AND stretcher_priority_id = 2 LIMIT 1";
-
+        
+        
+        $checkQuery = "select sr.stretcher_register_id,sr.hn,sdep.department as 'sent_dep',
+                fdep.department as 'from_dep',st.stretcher_type_name ,sr.doctor_request,
+                srs.R_name as 'receiver' 
+                from stretcher_register sr 
+                left join kskdepartment sdep ON sr.send_depcode=sdep.depcode
+                left join kskdepartment fdep ON sr.from_depcode=fdep.depcode
+                left join stretcher_type st ON sr.stretcher_type_id=st.stretcher_type_id
+                left join stretcher_request_staff srs ON sr.ผู้รับ=srs.Line_name
+                WHERE ผู้รับ = '$displayName' AND stretcher_priority_id = 2";
+                                                                                                   
         error_log("SQL Query: $checkQuery");
-
+                                                                                                   
         $checkResult = mysqli_query($conn, $checkQuery);
         if ($checkResult) {
             $row = mysqli_fetch_assoc($checkResult);
@@ -584,7 +594,7 @@ switch ($text) {
                                                 },
                                                 {
                                                     "size": "sm",
-                                                    "text": "' . ensureNonEmpty($row['from_depcode']) . '",
+                                                    "text": "' . $row['from_dep'] . '",
                                                     "wrap": true,
                                                     "color": "#666666",
                                                     "type": "text"
@@ -604,7 +614,7 @@ switch ($text) {
                                                 },
                                                 {
                                                     "size": "sm",
-                                                    "text": "' . ensureNonEmpty($row['send_depcode']) . '",
+                                                    "text": "' . $row['sent_dep'] . '",
                                                     "wrap": true,
                                                     "color": "#666666",
                                                     "type": "text"
@@ -624,7 +634,7 @@ switch ($text) {
                                                     "size": "sm",
                                                     "type": "text",
                                                     "wrap": true,
-                                                    "text": "' . ensureNonEmpty($row['stretcher_type_id']) . '"
+                                                    "text": "' . $row['stretcher_type_name'] . '"
                                                 }
                                             ],
                                             "type": "box"
@@ -642,7 +652,7 @@ switch ($text) {
                                                     "size": "sm",
                                                     "type": "text",
                                                     "wrap": true,
-                                                    "text": "' . $displayName . '"
+                                                    "text": "' . $row['receiver'] . '"
                                                 }
                                             ],
                                             "type": "box"
@@ -661,7 +671,7 @@ switch ($text) {
                 error_log("No jobs found with status 1");
                 $replymessage[] = [
                     "type" => "text",
-                    "text" => "You have no jobs with status 1."
+                    "text" => "You have no jobs with status 1. ID = $idreg"
                 ];
             }
         } else {
@@ -674,6 +684,7 @@ switch ($text) {
         break;
 
     case 'รับงาน' || 'r':
+        
         $replymessage[] = json_decode('{
             "type": "flex",
             "altText": "Flex Message",
