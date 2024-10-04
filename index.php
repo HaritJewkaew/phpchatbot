@@ -199,7 +199,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
                                                         "size": "sm",
                                                         "type": "text",
                                                         "wrap": true,
-                                                        "text": "' . $reResult['reciver'] . '"
+                                                        "text": "' . $displayName . '"
                                                     }
                                                 ],
                                                 "type": "box"
@@ -295,7 +295,7 @@ if (isset($postbackData['action']) && $postbackData['action'] == 'confirm_comple
                 $replyMessage = [
                     [
                         "type" => "text",
-                        "text" => "เยี่ยมมาก $displayName งานของคุณเสร็จเเล้ว"
+                        "text" => "เยี่ยมมาก งานของคุณเสร็จเเล้ว"
                     ]
                 ];
 

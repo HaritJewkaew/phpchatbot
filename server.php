@@ -90,13 +90,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_SERVER['REQUEST_URI'] === '/api/us
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_SERVER['REQUEST_URI'] === '/api/addusers') {
     $data = json_decode(file_get_contents("php://input"), true);
 
-    $ไอดี = $data['ไอดี'];
-    $ชื่อ = $data['ชื่อ'];
-    $ตำแหน่ง = $data['ตำแหน่ง'];
+    $ID = $data['ID'];
+    $Name = $data['Name'];
+    $Role = $data['Role'];
 
     // Check if user with the same ID already exists
-    $stmt = $conn->prepare("SELECT * FROM users WHERE ไอดี = ?");
-    $stmt->bind_param("s", $ไอดี);
+    $stmt = $conn->prepare("SELECT * FROM users WHERE ID = ?");
+    $stmt->bind_param("s", $displayName);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_SERVER['REQUEST_URI'] === '/api/a
     } else {
         // Insert new user into the database
         $stmt = $conn->prepare("INSERT INTO users (ชื่อ, ตำแหน่ง) VALUES (?, ?)");
-        $stmt->bind_param("ss", $ชื่อ, $ตำแหน่ง);
+        $stmt->bind_param("ss", $Name, $Role);
 
         if ($stmt->execute()) {
             echo json_encode(["message" => "User added successfully"]);
