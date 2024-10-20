@@ -76,8 +76,8 @@ function getRequestResult() {
     
     // SQL query to get the highest priority stretcher request
     $sql = "SELECT * FROM stretcher_register 
-            WHERE stretcher_priority_id = 1 
-            ORDER BY stretcher_work_status_id DESC 
+            WHERE stretcher_work_status_id  = 1 
+            ORDER BY stretcher_register_id ASC 
             LIMIT 1";
     
     error_log("Executing query: $sql");
@@ -110,7 +110,7 @@ function getRequestResult() {
             $requestResult['stc_return_time'] = $row['เวลาส่ง'] ?? '';
 
         } else {
-            error_log("No rows found with stretcher_priority_id = 1");
+            error_log("No rows found with stretcher_work_status_id  = 1");
         }
 
         $stmt->close();

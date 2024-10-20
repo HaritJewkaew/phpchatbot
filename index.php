@@ -39,7 +39,7 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
             $row = mysqli_fetch_assoc($selectResult);
             if ($row) {
                 $infoId = $row['stretcher_register_id'];
-                $updateQuery = "UPDATE stretcher_register SET stretcher_priority_id = 2, ผู้รับ = '$displayName' WHERE stretcher_register_id = '$infoId'";
+                $updateQuery = "UPDATE stretcher_register SET stretcher_work_status_id = 2, ผู้รับ = '$displayName', stretcher_register_send_time = curtime() , stretcher_register_accept_date = curdate() WHERE stretcher_register_id = '$infoId'";
 
                 try {
                     $updateResult = mysqli_query($conn, $updateQuery);
@@ -279,7 +279,7 @@ if (isset($postbackData['action']) && $postbackData['action'] == 'confirm_comple
     if ($selectResult) {
         $row = mysqli_fetch_assoc($selectResult);
         if ($row) {
-            $updateQuery = "UPDATE stretcher_register SET stretcher_priority_id = 3, lastupdate = NOW() WHERE stretcher_register_id = '$responseId'";
+            $updateQuery = "UPDATE stretcher_register SET stretcher_work_status_id = 3, lastupdate = NOW(), stretcher_register_return_time = curtime() WHERE stretcher_register_id = '$responseId'";
 
             try {
                 $updateResult = mysqli_query($conn, $updateQuery);
@@ -426,20 +426,39 @@ switch ($text) {
 
     case 'เช็คงาน':
         $id = $reResult['ID'];
-        $checkQuery = "SELECT `stretcher_register_id` FROM `stretcher_register` WHERE `stretcher_priority_id` = 1;";
+        $checkQuery = "SELECT count(stretcher_register_id) as QTY FROM stretcher_register WHERE stretcher_work_status_id = 1;";
         error_log("SQL Query: $checkQuery");
         
         $checkResult = mysqli_query($conn, $checkQuery);
         if ($checkResult) {
             $row = mysqli_fetch_assoc($checkResult);
             if ($row) {
-                $infoId = $row['stretcher_register_id'];
+                $infoId = $row['QTY'];
                 error_log("Found job: " . json_encode($row));
             }
-        $replymessage[] = [
-            "type" => "text",
-            "text" => $message
-        ];
+            if ($row['QTY']=="0") {
+                $replyMessage = [
+                    [
+                        "type" => "text",
+                        "text" => "ไม่เหลือค้างอยู่ในระบบ"
+                    ]
+                ];
+            }else {
+                $replyMessage = [
+                    [
+                        "type" => "text",
+                        "text" => "งานในระบบที่เหลืออยู่มี " . $row['QTY'] . " งาน"
+                    ]
+                ];
+            }
+           
+            $replyJson = json_encode([
+                "replyToken" => $replyToken,
+                "messages" => $replyMessage
+            ]);
+
+            sendMessage($replyJson, ['URL' => "https://api.line.me/v2/bot/message/reply", 'AccessToken' => 'OFvAmyeycV9atKHD7us21lzfwsG3NJGFMXTRc+cpWwY1EiKknhBihm7CW7rMjoOExw/7w0iT6CwRwrFW7pXGZ296IuylEbnVKcTzPXCcjyFpEn4X1QeTYvVEoUT9xAVRwQjliEEoP4whuGoGBoMLbAdB04t89/1O/w1cDnyilFU=']);
+
         break;
     }
 
@@ -465,7 +484,7 @@ switch ($text) {
                 left join kskdepartment fdep ON sr.from_depcode=fdep.depcode
                 left join stretcher_type st ON sr.stretcher_type_id=st.stretcher_type_id
                 left join stretcher_request_staff srs ON sr.ผู้รับ=srs.Line_name
-                WHERE ผู้รับ = '$displayName' AND stretcher_priority_id = 2";
+                WHERE ผู้รับ = '$displayName' AND stretcher_work_status_id = 2";
                                                                                                    
         error_log("SQL Query: $checkQuery");
                                                                                                    
