@@ -24,7 +24,9 @@ switch ($method) {
 function handleGet($pdo) {
     try {
 
-        $sql = "SELECT  stretcher_register_accept_date, from_depcode, send_depcode, stretcher_work_status_id, stretcher_register_accept_date, ผู้รับ FROM stretcher_register";
+        $sql = "SELECT sr.stretcher_register_accept_date, kf.department as 'from_depcode', ks.department as 'send_depcode', sr.stretcher_work_status_id, sr.stretcher_register_send_time, sr.stretcher_register_return_time, sr.ผู้รับ , srs.R_name FROM stretcher_register sr LEFT JOIN kskdepartment kf ON sr.from_depcode = kf.depcode LEFT JOIN kskdepartment ks ON sr.send_depcode = ks.depcode LEFT JOIN stretcher_request_staff srs ON sr.ผู้รับ = srs.Line_name";
+        //$sql = "SELECT sr.stretcher_register_accept_date, kf.department as 'from_depcode', ks.department as 'send_depcode', sr.stretcher_work_status_id, sr.stretcher_register_send_time, sr.stretcher_register_return_time, srs.R_name FROM stretcher_register sr LEFT JOIN kskdepartment kf ON sr.from_depcode = kf.depcode LEFT JOIN kskdepartment ks ON sr.send_depcode = ks.depcode LEFT JOIN stretcher_request_staff srs ON sr.ผู้รับ = srs.Line_name GROUP BY srs.R_name";
+
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
 

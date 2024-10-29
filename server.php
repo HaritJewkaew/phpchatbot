@@ -59,6 +59,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_SERVER['REQUEST_URI'] === '/api/pe
     }
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_SERVER['REQUEST_URI'] === '/api/statistics') {
+    $result = $conn->query("SELECT stretcher_register_accept_date, from_depcode, send_depcode, stretcher_work_status_id, stretcher_register_accept_date, ผู้รับ FROM stretcher_register");
+
+    if ($result) {
+        $rows = [];
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = $row;
+        }
+        echo json_encode($rows);
+    } else {
+        echo json_encode(["error" => $conn->error]);
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_SERVER['REQUEST_URI'] === '/api/home') {
     $result = $conn->query("SELECT ผู้รับ, from_depcode, send_depcode, stretcher_work_status_id, stretcher_register_accept_date FROM stretcher_register");
 
@@ -104,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_SERVER['REQUEST_URI'] === '/api/a
         echo json_encode(["error" => "User with this ID already exists"]);
     } else {
         // Insert new user into the database
-        $stmt = $conn->prepare("INSERT INTO users (ชื่อ, ตำแหน่ง) VALUES (?, ?)");
+        $stmt = $conn->prepare("INSERT INTO users (Name, Role) VALUES (?, ?)");
         $stmt->bind_param("ss", $Name, $Role);
 
         if ($stmt->execute()) {
