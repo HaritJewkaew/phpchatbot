@@ -15,7 +15,11 @@ $input = json_decode(file_get_contents('php://input'), true);
 
 switch ($method) {
     case 'POST':
-        handleRegister($pdo, $input);
+        if (isset($input['action']) && $input['action'] === 'login') {
+            handleLogin($pdo, $input);
+        } else {
+            handleRegister($pdo, $input);
+        }
         break;
     default:
         http_response_code(405); // 405 Method Not Allowed
@@ -69,4 +73,53 @@ function handleRegister($pdo, $input) {
         http_response_code(500);
         echo json_encode(['error' => 'An error occurred during registration', 'details' => $e->getMessage()]);
     }
+}
+
+function handleLogin($pdo, $input) {
+    try {
+        $username = $input['Username'] ?? null;
+        $password = $input['Password'] ?? null;
+
+        if (!$username || !$password) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Username and password are required']);
+            exit;
+        }
+
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE Username = :username");
+        $stmt->bindParam(':username', $username);
+        $stmt->execute();
+
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$user || !password_verify($password, $user['Password'])) {
+            http_response_code(401); // Unauthorized
+            echo json_encode(['error' => 'Invalid username or password']);
+            exit;
+        }
+
+        $jwtSecret = "supermaneatenbycat";
+        $payload = [
+            'userId' => $user['id'],
+            'username' => $user['Username'],
+        ];
+        $token = generateJWT($payload, $jwtSecret);
+
+        echo json_encode(['message' => 'Login successful', 'token' => $token]);
+    } catch (PDOException $e) {
+        http_response_code(500);
+        echo json_encode(['error' => 'An error occurred during login', 'details' => $e->getMessage()]);
+    }
+}
+
+function generateJWT($payload, $secret) {
+    $header = json_encode(['typ' => 'JWT', 'alg' => 'HS256']);
+    $base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
+
+    $base64UrlPayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(json_encode($payload)));
+
+    $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, $secret, true);
+    $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
+
+    return $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
 }

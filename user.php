@@ -23,6 +23,12 @@ switch ($method) {
     case 'POST':
         handlePost($pdo, $input);
         break;
+    case 'PUT':
+        handlePut($pdo, $input);
+        break;
+    case 'DELETE':
+        handleDelete($pdo, $input);
+        break;
     default:
         http_response_code(405); // 405 Method Not Allowed
         echo json_encode(['message' => 'Invalid request method']);
@@ -69,5 +75,55 @@ function handlePost($pdo, $input) {
         http_response_code(500);
         echo json_encode(['error' => 'Failed to insert data', 'details' => $e->getMessage()]);
     }
+}
+function handlePut($pdo, $input) {
+    try{
+        if (!isset($input['Name']) || !isset($input['Role'])) {
+            http_response_code(400); // 400 Bad Request
+            echo json_encode(['message' => 'Missing required fields']);
+            return;
+        }
+        $name = $input['Name'];
+        $role = $input['Role'];
+        $id = $input['ID'];
+
+        $sql = "UPDATE users set Name=:name, Role=:role where ID=:id";
+        $stmt = $pdo->prepare($sql);
+
+        $stmt->bindParam(':name', $name);
+        $stmt->bindParam(':role', $role);
+        $stmt->bindParam(':id', $id);
+
+        $stmt->execute();
+
+        http_response_code(201); // 201 Created
+        echo json_encode(['message' => 'User created successfully']);
+
+    }catch (PDOException $e) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Failed to insert data', 'details' => $e->getMessage()]);
+    }
+
+}
+function handleDelete($pdo, $input) {
+    try{
+        $id = $input['ID'];
+
+        $sql = "DELETE From users where ID=:id";
+        $stmt = $pdo->prepare($sql);
+
+        
+        $stmt->bindParam(':id', $id);
+
+        $stmt->execute();
+
+        http_response_code(201); // 201 Created
+        echo json_encode(['message' => 'User created successfully']);
+
+    }catch (PDOException $e) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Failed to insert data', 'details' => $e->getMessage()]);
+    }
+
 }
 ?>
