@@ -39,12 +39,17 @@ if (isset($jsonData["events"][0]["type"]) && $jsonData["events"][0]["type"] == "
             $row = mysqli_fetch_assoc($selectResult);
             if ($row) {
                 $infoId = $row['stretcher_register_id'];
-                $updateQuery = "UPDATE stretcher_register SET stretcher_work_status_id = 2, ผู้รับ = '$displayName', stretcher_register_send_time = curtime() , stretcher_register_accept_date = curdate() WHERE stretcher_register_id = '$infoId'";
+                $sDate = date("H:i:s");
+                $updateQuery = "UPDATE stretcher_register SET stretcher_work_status_id = 2, ผู้รับ = '$displayName', stretcher_register_send_time = '$sDate', stretcher_register_accept_time = '$sDate' , stretcher_register_accept_date = curdate() WHERE stretcher_register_id = '$itemId';";
 
                 try {
                     $updateResult = mysqli_query($conn, $updateQuery);
+                    if (!$updateResult) {
+                        // Log the error and the query to console
+                        error_log("Error executing update query: '$updateQuery' - " . mysqli_error($conn));
+                    }
                 } catch (\Throwable $th) {
-                    error_log($th->getMessage());
+                    error_log("Exception encountered during update: " . $th->getMessage());
                 }
 
                 if ($updateResult) {
@@ -279,12 +284,15 @@ if (isset($postbackData['action']) && $postbackData['action'] == 'confirm_comple
     if ($selectResult) {
         $row = mysqli_fetch_assoc($selectResult);
         if ($row) {
-            $updateQuery = "UPDATE stretcher_register SET stretcher_work_status_id = 3, lastupdate = NOW(), stretcher_register_return_time = curtime() WHERE stretcher_register_id = '$responseId'";
+            $updateQuery4 = "UPDATE stretcher_register SET stretcher_work_status_id = 4, lastupdate = NOW(), stretcher_register_return_time = curtime() WHERE stretcher_register_id = '$responseId'";
 
             try {
-                $updateResult = mysqli_query($conn, $updateQuery);
+                $updateResult = mysqli_query($conn, $updateQuery4);
+                if (!$updateResult) {
+                    error_log("Error updating status for stretcher_register_id '$responseId': " . mysqli_error($conn));
+                }
             } catch (\Throwable $th) {
-                error_log("Error updating status for stretcher_register_id '$responseId': " . $th->getMessage());
+                error_log("Exception while updating status for stretcher_register_id '$responseId': " . $th->getMessage());
             }
 
             if ($updateResult) {
@@ -478,12 +486,12 @@ switch ($text) {
         
         $checkQuery = "select sr.stretcher_register_id,sr.hn,sdep.department as 'sent_dep',
                 fdep.department as 'from_dep',st.stretcher_type_name ,sr.doctor_request,
-                srs.R_name as 'receiver' 
+                u.Name as 'receiver' 
                 from stretcher_register sr 
                 left join kskdepartment sdep ON sr.send_depcode=sdep.depcode
                 left join kskdepartment fdep ON sr.from_depcode=fdep.depcode
                 left join stretcher_type st ON sr.stretcher_type_id=st.stretcher_type_id
-                left join stretcher_request_staff srs ON sr.ผู้รับ=srs.Line_name
+                left join users u ON sr.ผู้รับ=u.Line_name
                 WHERE ผู้รับ = '$displayName' AND stretcher_work_status_id = 2";
                                                                                                    
         error_log("SQL Query: $checkQuery");

@@ -60,12 +60,14 @@ function handlePost($pdo, $input) {
 
         $name = $input['Name'];
         $role = $input['Role'];
+        $l_name = $input['Line_name'];
 
-        $sql = "INSERT INTO users (Name, Role) VALUES (:name, :role)";
+        $sql = "INSERT INTO users (Name, Role, Line_name) VALUES (:name, :role, :l_name) ";
         $stmt = $pdo->prepare($sql);
 
         $stmt->bindParam(':name', $name);
         $stmt->bindParam(':role', $role);
+        $stmt->bindParam(':l_name', $l_name);
 
         $stmt->execute();
 
@@ -86,13 +88,15 @@ function handlePut($pdo, $input) {
         $name = $input['Name'];
         $role = $input['Role'];
         $id = $input['ID'];
+        $l_name = $input['Line_name'];
 
-        $sql = "UPDATE users set Name=:name, Role=:role where ID=:id";
+        $sql = "UPDATE users set Name=:name, Role=:role ,Line_name=:l_name where ID=:id";
         $stmt = $pdo->prepare($sql);
 
         $stmt->bindParam(':name', $name);
         $stmt->bindParam(':role', $role);
         $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':l_name', $l_name);
 
         $stmt->execute();
 

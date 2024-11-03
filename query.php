@@ -25,7 +25,7 @@ function getDepartmentName($depcode) {
 function getR_Name($LIname) {
     global $conn;
     
-    $sql = "SELECT R_name FROM stretcher_request_staff WHERE Line_name = ?";
+    $sql = "SELECT Name FROM users WHERE Line_name = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $LIname);
     $stmt->execute();
@@ -33,7 +33,7 @@ function getR_Name($LIname) {
     
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        return $row['R_name'];
+        return $row['Name'];
     } else {
         return $LIname; // Return the depcode itself if no department is found
     }

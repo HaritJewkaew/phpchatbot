@@ -25,7 +25,24 @@ function handleGet($pdo) {
     try {
 
         //$sql = "SELECT sr.stretcher_register_accept_date, sr.stretcher_work_status_id, sr.stretcher_register_send_time, sr.stretcher_register_return_time, sr.ผู้รับ , srs.R_name FROM stretcher_register sr LEFT JOIN stretcher_request_staff srs ON sr.ผู้รับ = srs.Line_name";
-        $sql = "SELECT sr.stretcher_register_accept_date, kf.department as 'from_depcode', ks.department as 'send_depcode', sr.stretcher_work_status_id, sr.stretcher_register_send_time, sr.stretcher_register_return_time, srs.R_name FROM stretcher_register sr LEFT JOIN kskdepartment kf ON sr.from_depcode = kf.depcode LEFT JOIN kskdepartment ks ON sr.send_depcode = ks.depcode LEFT JOIN stretcher_request_staff srs ON sr.ผู้รับ = srs.Line_name where sr.stretcher_work_status_id = 3;";
+        $sql = "SELECT
+    sr.stretcher_register_accept_date,
+    kf.department AS 'from_depcode',
+    ks.department AS 'send_depcode',
+    sr.stretcher_work_status_id,
+    sr.stretcher_register_send_time,
+    sr.stretcher_register_return_time,
+    u.Name
+FROM
+    stretcher_register sr
+LEFT JOIN kskdepartment kf ON
+    sr.from_depcode = kf.depcode
+LEFT JOIN kskdepartment ks ON
+    sr.send_depcode = ks.depcode
+LEFT JOIN users u ON
+    sr.ผู้รับ = u.Line_name
+WHERE
+    sr.stretcher_work_status_id = 4;";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
