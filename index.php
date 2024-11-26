@@ -21,7 +21,7 @@ $utype = $jsonData['events'][0]['type'] ?? null;
 
 $infoId = null;
 
-function ensureNonEmpty($value, $default = "ไม่ระบุ") {
+function ensureNonEmpty($value, $default = "ไม่มีงานในระบบ") {
     return !empty($value) ? $value : $default;
 }
 
